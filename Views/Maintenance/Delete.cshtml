@@ -1,0 +1,42 @@
+﻿@model FleetManagementSystem.Models.Maintenance
+@{
+    ViewData["Title"] = "Delete Maintenance Record";
+}
+
+<div class="panel" style="max-width:500px;">
+    <div class="panel-header">
+        <h5 style="color:#f87171;"><i class="fas fa-trash"></i> Delete Maintenance Record</h5>
+    </div>
+    <div class="panel-body">
+        <p style="color:#94a3b8; margin-bottom:20px;">
+            Are you sure you want to delete this record? This action cannot be undone.
+        </p>
+
+        <div class="detail-item" style="margin-bottom:12px;">
+            <span class="detail-label">Vehicle</span>
+            <span class="detail-value">@Model.Vehicle.Make @Model.Vehicle.Model</span>
+        </div>
+        <div class="detail-item" style="margin-bottom:12px;">
+            <span class="detail-label">Service Type</span>
+            <span class="detail-value">@Model.ServiceType</span>
+        </div>
+        <div class="detail-item" style="margin-bottom:12px;">
+            <span class="detail-label">Service Date</span>
+            <span class="detail-value">@Model.ServiceDate.ToString("dd MMM yyyy")</span>
+        </div>
+        <div class="detail-item" style="margin-bottom:20px;">
+            <span class="detail-label">Cost</span>
+            <span class="detail-value" style="color:#22c55e;">৳@Model.Cost.ToString("N0")</span>
+        </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn-indigo" style="background:#dc2626;">
+                    <i class="fas fa-trash"></i> Yes, Delete
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

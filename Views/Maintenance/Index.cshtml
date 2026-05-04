@@ -1,0 +1,78 @@
+﻿@model IEnumerable<FleetManagementSystem.Models.Maintenance>
+@{
+    ViewData["Title"] = "Maintenance";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success-bar">
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-wrench"></i> Maintenance Records</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Add Record
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Service Type</th>
+                    <th>Service Date</th>
+                    <th>Next Service</th>
+                    <th>Cost</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    var overdue = m.NextServiceDate.HasValue && m.NextServiceDate.Value < DateTime.Now && m.Status != "Completed";
+                    <tr>
+                        <td><strong>@m.Vehicle.Make</strong> @m.Vehicle.Model</td>
+                        <td>@m.ServiceType</td>
+                        <td>@m.ServiceDate.ToString("dd MMM yyyy")</td>
+                        <td style="color:@(overdue ? "#f87171" : "#e2e8f0");">
+                            @(m.NextServiceDate.HasValue? m.NextServiceDate.Value.ToString("dd MMM yyyy") : "—")
+                            @if (overdue)
+                            {
+                                <span class="badge badge-overdue" style="margin-left:6px;">Overdue</span>
+                            }
+                        </td>
+                        <td style="color:#22c55e;">৳@m.Cost.ToString("N0")</td>
+                        <td>
+                            <span class="badge @GetBadge(m.Status)">@m.Status</span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@m.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@m.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@m.Id" class="btn-ghost" style="font-size:0.8rem; color:#f87171;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string GetBadge(string status) => status switch
+    {
+        "Completed" => "badge-completed",
+        "Scheduled" => "badge-planned",
+        "Overdue" => "badge-overdue",
+        _ => "badge-inactive"
+    };
+}

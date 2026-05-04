@@ -1,0 +1,67 @@
+﻿@model FleetManagementSystem.Models.Maintenance
+@{
+    ViewData["Title"] = "Maintenance Details";
+    var overdue = Model.NextServiceDate.HasValue && Model.NextServiceDate.Value < DateTime.Now && Model.Status != "Completed";
+}
+
+<div class="panel" style="max-width:700px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-wrench"></i> @Model.ServiceType</h5>
+        <div style="display:flex; gap:8px;">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-indigo">
+                <i class="fas fa-pen"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="grid-2">
+            <div class="detail-item">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value">@Model.Vehicle.Make @Model.Vehicle.Model</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">License Plate</span>
+                <span class="detail-value" style="color:#818cf8;">@Model.Vehicle.LicensePlate</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Service Type</span>
+                <span class="detail-value">@Model.ServiceType</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Status</span>
+                <span class="badge @(Model.Status == "Completed" ? "badge-completed" : Model.Status == "Scheduled" ? "badge-planned" : "badge-overdue")">
+                    @Model.Status
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Service Date</span>
+                <span class="detail-value">@Model.ServiceDate.ToString("dd MMM yyyy")</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Next Service Date</span>
+                <span class="detail-value" style="color:@(overdue ? "#f87171" : "#e2e8f0");">
+                    @(Model.NextServiceDate.HasValue? Model.NextServiceDate.Value.ToString("dd MMM yyyy") : "—")
+                    @if (overdue)
+                    {
+                        <span class="badge badge-overdue" style="margin-left:6px;">Overdue</span>
+                    }
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Cost</span>
+                <span class="detail-value" style="color:#22c55e; font-size:1.1rem;">৳@Model.Cost.ToString("N0")</span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div style="margin-top:20px; padding:16px; background:#0f1117; border-radius:8px; border:1px solid #2d3150;">
+                <span class="detail-label">Notes</span>
+                <p style="color:#cbd5e1; margin-top:8px; font-size:0.9rem;">@Model.Notes</p>
+            </div>
+        }
+    </div>
+</div>
