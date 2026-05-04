@@ -1,0 +1,40 @@
+﻿@model FleetManagementSystem.Models.Driver
+@{
+    ViewData["Title"] = "Delete Driver";
+}
+
+<div class="panel" style="max-width:500px;">
+    <div class="panel-header">
+        <h5 style="color:#f87171;"><i class="fas fa-trash"></i> Delete Driver</h5>
+    </div>
+    <div class="panel-body">
+        <p style="color:#94a3b8; margin-bottom:20px;">
+            Are you sure you want to delete this driver? This action cannot be undone.
+        </p>
+
+        <div class="detail-item" style="margin-bottom:12px;">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">@Model.FirstName @Model.LastName</span>
+        </div>
+        <div class="detail-item" style="margin-bottom:12px;">
+            <span class="detail-label">License Number</span>
+            <span class="detail-value" style="color:#818cf8;">@Model.LicenseNumber</span>
+        </div>
+        <div class="detail-item" style="margin-bottom:20px;">
+            <span class="detail-label">Status</span>
+            <span class="badge @(Model.Status == "Active" ? "badge-active" : "badge-inactive")">
+                @Model.Status
+            </span>
+        </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn-indigo" style="background:#dc2626;">
+                    <i class="fas fa-trash"></i> Yes, Delete
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

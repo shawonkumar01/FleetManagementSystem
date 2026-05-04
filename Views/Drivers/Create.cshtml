@@ -1,0 +1,63 @@
+﻿@model FleetManagementSystem.Models.Driver
+@{
+    ViewData["Title"] = "Add Driver";
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-plus"></i> Add New Driver</h5>
+        <a asp-action="Index" class="btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="form-label">First Name</label>
+                    <input asp-for="FirstName" class="form-input" placeholder="e.g. Rahim" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="form-label">Last Name</label>
+                    <input asp-for="LastName" class="form-input" placeholder="e.g. Uddin" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LicenseNumber" class="form-label">License Number</label>
+                <input asp-for="LicenseNumber" class="form-input" placeholder="e.g. DL-001-2024" />
+                <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LicenseExpiry" class="form-label">License Expiry Date</label>
+                <input asp-for="LicenseExpiry" class="form-input" type="date" />
+                <span asp-validation-for="LicenseExpiry" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone" class="form-label">Phone</label>
+                <input asp-for="Phone" class="form-input" placeholder="e.g. 01711-000001" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-input">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-save"></i> Save Driver
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

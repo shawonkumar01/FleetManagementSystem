@@ -1,0 +1,96 @@
+﻿@model FleetManagementSystem.Models.Driver
+@{
+    ViewData["Title"] = "Driver Details";
+    var expired = Model.LicenseExpiry < DateTime.Now;
+}
+
+<div style="display:flex; gap:20px; flex-direction:column;">
+
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-id-card"></i> @Model.FirstName @Model.LastName</h5>
+            <div style="display:flex; gap:8px;">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-indigo">
+                    <i class="fas fa-pen"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="grid-2">
+                <div class="detail-item">
+                    <span class="detail-label">License Number</span>
+                    <span class="detail-value" style="color:#818cf8;">@Model.LicenseNumber</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="badge @(Model.Status == "Active" ? "badge-active" : "badge-inactive")">
+                        @Model.Status
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">License Expiry</span>
+                    <span class="detail-value" style="color:@(expired ? "#f87171" : "#e2e8f0");">
+                        @Model.LicenseExpiry.ToString("dd MMM yyyy")
+                        @if (expired)
+                        {
+                            <span class="badge badge-overdue" style="margin-left:6px;">Expired</span>
+                        }
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Phone</span>
+                    <span class="detail-value">@Model.Phone</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip History -->
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-route"></i> Trip History</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            @if (Model.Trips.Any())
+            {
+                <table class="fleet-table">
+                    <thead>
+                        <tr>
+                            <th>Vehicle</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Distance</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Trips)
+                        {
+                            <tr>
+                                <td>@t.Vehicle?.Make @t.Vehicle?.Model</td>
+                                <td>@t.Origin</td>
+                                <td>@t.Destination</td>
+                                <td>@t.DistanceKm km</td>
+                                <td>@t.StartTime.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    <span class="badge @(t.Status == "Completed" ? "badge-completed" : t.Status == "InProgress" ? "badge-active" : "badge-planned")">
+                                        @t.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="padding:20px; color:#64748b;">No trips recorded.</p>
+            }
+        </div>
+    </div>
+
+</div>

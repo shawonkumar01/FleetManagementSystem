@@ -1,0 +1,68 @@
+﻿@model IEnumerable<FleetManagementSystem.Models.Driver>
+@{
+    ViewData["Title"] = "Drivers";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success-bar">
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-id-card"></i> All Drivers</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Add Driver
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>License Number</th>
+                    <th>License Expiry</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model)
+                {
+                    var expired = d.LicenseExpiry < DateTime.Now;
+                    <tr>
+                        <td><strong>@d.FirstName @d.LastName</strong></td>
+                        <td><code style="color:#818cf8;">@d.LicenseNumber</code></td>
+                        <td style="color:@(expired ? "#f87171" : "#e2e8f0");">
+                            @d.LicenseExpiry.ToString("dd MMM yyyy")
+                            @if (expired)
+                            {
+                                <span class="badge badge-overdue" style="margin-left:6px;">Expired</span>
+                            }
+                        </td>
+                        <td>@d.Phone</td>
+                        <td>
+                            <span class="badge @(d.Status == "Active" ? "badge-active" : "badge-inactive")">
+                                @d.Status
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@d.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@d.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@d.Id" class="btn-ghost" style="font-size:0.8rem; color:#f87171;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
