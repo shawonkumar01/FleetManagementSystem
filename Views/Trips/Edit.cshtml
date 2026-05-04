@@ -1,0 +1,79 @@
+﻿@model FleetManagementSystem.Models.Trip
+@{
+    ViewData["Title"] = "Edit Trip";
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-pen"></i> Edit Trip — @Model.Origin → @Model.Destination</h5>
+        <a asp-action="Index" class="btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+
+            <div class="form-group">
+                <label asp-for="VehicleId" class="form-label">Vehicle</label>
+                <select asp-for="VehicleId" asp-items="ViewBag.Vehicles" class="form-input"></select>
+                <span asp-validation-for="VehicleId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DriverId" class="form-label">Driver</label>
+                <select asp-for="DriverId" asp-items="ViewBag.Drivers" class="form-input"></select>
+                <span asp-validation-for="DriverId" class="text-danger"></span>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label asp-for="Origin" class="form-label">Origin</label>
+                    <input asp-for="Origin" class="form-input" />
+                    <span asp-validation-for="Origin" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Destination" class="form-label">Destination</label>
+                    <input asp-for="Destination" class="form-input" />
+                    <span asp-validation-for="Destination" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label asp-for="StartTime" class="form-label">Start Time</label>
+                    <input asp-for="StartTime" class="form-input" type="datetime-local" />
+                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndTime" class="form-label">End Time (optional)</label>
+                    <input asp-for="EndTime" class="form-input" type="datetime-local" />
+                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DistanceKm" class="form-label">Distance (km)</label>
+                <input asp-for="DistanceKm" class="form-input" type="number" step="0.1" />
+                <span asp-validation-for="DistanceKm" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-input">
+                    <option value="Planned">Planned</option>
+                    <option value="InProgress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-save"></i> Update Trip
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

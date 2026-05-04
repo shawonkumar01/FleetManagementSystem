@@ -1,0 +1,58 @@
+﻿@model FleetManagementSystem.Models.Trip
+@{
+    ViewData["Title"] = "Trip Details";
+}
+
+<div class="panel" style="max-width:700px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-route"></i> @Model.Origin → @Model.Destination</h5>
+        <div style="display:flex; gap:8px;">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-indigo">
+                <i class="fas fa-pen"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="grid-2">
+            <div class="detail-item">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value">@Model.Vehicle.Make @Model.Vehicle.Model</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Driver</span>
+                <span class="detail-value">@Model.Driver.FirstName @Model.Driver.LastName</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Origin</span>
+                <span class="detail-value">@Model.Origin</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Destination</span>
+                <span class="detail-value">@Model.Destination</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Start Time</span>
+                <span class="detail-value">@Model.StartTime.ToString("dd MMM yyyy, hh:mm tt")</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">End Time</span>
+                <span class="detail-value">
+                    @(Model.EndTime.HasValue? Model.EndTime.Value.ToString("dd MMM yyyy, hh:mm tt") : "—")
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Distance</span>
+                <span class="detail-value">@Model.DistanceKm km</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Status</span>
+                <span class="badge @(Model.Status == "Completed" ? "badge-completed" : Model.Status == "InProgress" ? "badge-active" : Model.Status == "Planned" ? "badge-planned" : "badge-inactive")">
+                    @Model.Status
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

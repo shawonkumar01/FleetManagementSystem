@@ -1,0 +1,74 @@
+﻿@model IEnumerable<FleetManagementSystem.Models.Trip>
+@{
+    ViewData["Title"] = "Trips";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success-bar">
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-route"></i> All Trips</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Add Trip
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Driver</th>
+                    <th>Route</th>
+                    <th>Distance</th>
+                    <th>Start Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model)
+                {
+                    <tr>
+                        <td><strong>@t.Vehicle.Make</strong> @t.Vehicle.Model</td>
+                        <td>@t.Driver.FirstName @t.Driver.LastName</td>
+                        <td style="font-size:0.82rem; color:#94a3b8;">
+                            @t.Origin → @t.Destination
+                        </td>
+                        <td>@t.DistanceKm km</td>
+                        <td>@t.StartTime.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <span class="badge @GetBadge(t.Status)">@t.Status</span>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@t.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@t.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@t.Id" class="btn-ghost" style="font-size:0.8rem; color:#f87171;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string GetBadge(string status) => status switch
+    {
+        "Completed" => "badge-completed",
+        "InProgress" => "badge-active",
+        "Planned" => "badge-planned",
+        "Cancelled" => "badge-inactive",
+        _ => "badge-inactive"
+    };
+}
