@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Reports";
+}
+
+<!-- ── Fleet Overview ── -->
+<div style="margin-bottom:24px;">
+    <h6 style="color:#64748b; text-transform:uppercase; letter-spacing:0.08em; font-size:0.78rem; margin-bottom:14px;">
+        Fleet Overview
+    </h6>
+    <div class="grid-4">
+        <div class="stat-card">
+            <div class="stat-icon indigo"><i class="fas fa-car"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.TotalVehicles</h3>
+                <p>Total Vehicles</p>
+                <small style="color:#818cf8;">@ViewBag.ActiveVehicles Active</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow"><i class="fas fa-wrench"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.InMaintenanceVehicles</h3>
+                <p>In Maintenance</p>
+                <small style="color:#fbbf24;">@ViewBag.RetiredVehicles Retired</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-id-card"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.TotalDrivers</h3>
+                <p>Total Drivers</p>
+                <small style="color:#22c55e;">@ViewBag.ActiveDrivers Active</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="fas fa-triangle-exclamation"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.ExpiredLicenses</h3>
+                <p>Expired Licenses</p>
+                <small style="color:#f87171;">Needs Renewal</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Trip & Maintenance Stats ── -->
+<div style="margin-bottom:24px;">
+    <h6 style="color:#64748b; text-transform:uppercase; letter-spacing:0.08em; font-size:0.78rem; margin-bottom:14px;">
+        Trip & Maintenance Summary
+    </h6>
+    <div class="grid-4">
+        <div class="stat-card">
+            <div class="stat-icon indigo"><i class="fas fa-route"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.TotalTrips</h3>
+                <p>Total Trips</p>
+                <small style="color:#818cf8;">@ViewBag.CompletedTrips Completed</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-road"></i></div>
+            <div class="stat-info">
+                <h3>@string.Format("{0:N0}", (double)ViewBag.TotalDistance)</h3>
+                <p>Total KM Driven</p>
+                <small style="color:#22c55e;">All Trips</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.PlannedTrips</h3>
+                <p>Planned Trips</p>
+                <small style="color:#fbbf24;">Upcoming</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="fas fa-bangladeshi-taka-sign"></i></div>
+            <div class="stat-info">
+                <h3>৳@string.Format("{0:N0}", (decimal)ViewBag.TotalMaintenanceCost)</h3>
+                <p>Maintenance Cost</p>
+                <small style="color:#f87171;">@ViewBag.ScheduledMaint Scheduled</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Vehicle Report ── -->
+<div style="margin-bottom:24px;">
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-car"></i> Vehicle Performance Report</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>License Plate</th>
+                        <th>Status</th>
+                        <th>Mileage</th>
+                        <th>Trips</th>
+                        <th>Distance (km)</th>
+                        <th>Maint. Records</th>
+                        <th>Maint. Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in ViewBag.VehicleReport)
+                    {
+                        <tr>
+                            <td><strong>@v.Make</strong> @v.Model</td>
+                            <td><code style="color:#818cf8;">@v.LicensePlate</code></td>
+                            <td>
+                                <span class="badge @(v.Status == "Active" ? "badge-active" : v.Status == "InMaintenance" ? "badge-maintenance" : "badge-inactive")">
+                                    @v.Status
+                                </span>
+                            </td>
+                            <td>@string.Format("{0:N0}", v.Mileage) km</td>
+                            <td style="color:#818cf8; font-weight:600;">@v.TripCount</td>
+                            <td>@string.Format("{0:N0}", v.TotalDistance)</td>
+                            <td style="color:#fbbf24; font-weight:600;">@v.MaintCount</td>
+                            <td style="color:#22c55e;">৳@string.Format("{0:N0}", v.TotalMaintCost)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── Driver Report ── -->
+<div>
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-id-card"></i> Driver Performance Report</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>License No.</th>
+                        <th>License Expiry</th>
+                        <th>Status</th>
+                        <th>Total Trips</th>
+                        <th>Completed</th>
+                        <th>Total Distance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in ViewBag.DriverReport)
+                    {
+                        var expired = d.LicenseExpiry < DateTime.Now;
+                        <tr>
+                            <td><strong>@d.FirstName</strong> @d.LastName</td>
+                            <td><code style="color:#818cf8;">@d.LicenseNumber</code></td>
+                            <td style="color:@(expired ? "#f87171" : "#e2e8f0");">
+                                @string.Format("{0:dd MMM yyyy}", d.LicenseExpiry)
+                                @if (expired)
+                                {
+                                    <span class="badge badge-overdue" style="margin-left:6px;">Expired</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(d.Status == "Active" ? "badge-active" : "badge-inactive")">
+                                    @d.Status
+                                </span>
+                            </td>
+                            <td style="color:#818cf8; font-weight:600;">@d.TripCount</td>
+                            <td style="color:#22c55e; font-weight:600;">@d.CompletedTrips</td>
+                            <td>@string.Format("{0:N0}", d.TotalDistance) km</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
