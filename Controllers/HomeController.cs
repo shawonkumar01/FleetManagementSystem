@@ -24,6 +24,8 @@ namespace FleetManagementSystem.Controllers
             ViewBag.TotalTrips = await _context.Trips.CountAsync();
             ViewBag.OngoingTrips = await _context.Trips.CountAsync(t => t.Status == "InProgress");
             ViewBag.PendingMaint = await _context.MaintenanceRecords.CountAsync(m => m.Status == "Scheduled");
+            ViewBag.TotalFuelCost = await _context.FuelRecords.SumAsync(f => f.TotalCost);
+            ViewBag.TotalFuelLiters = await _context.FuelRecords.SumAsync(f => f.LitersFilled);
 
             ViewBag.RecentTrips = await _context.Trips
                 .Include(t => t.Vehicle)

@@ -176,3 +176,69 @@
         </div>
     </div>
 </div>
+<!-- ── Fuel Report ── -->
+<div style="margin-top:24px;">
+    <h6 style="color:#64748b; text-transform:uppercase; letter-spacing:0.08em; font-size:0.78rem; margin-bottom:14px;">
+        Fuel Summary
+    </h6>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-gas-pump"></i></div>
+            <div class="stat-info">
+                <h3>@ViewBag.TotalFuelRecords</h3>
+                <p>Fuel Records</p>
+                <small style="color:#22c55e;">All Time</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon indigo"><i class="fas fa-droplet"></i></div>
+            <div class="stat-info">
+                <h3>@string.Format("{0:N0}", ViewBag.TotalFuelLiters) L</h3>
+                <p>Total Liters</p>
+                <small style="color:#818cf8;">All Vehicles</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon yellow"><i class="fas fa-bangladeshi-taka-sign"></i></div>
+            <div class="stat-info">
+                <h3>৳@string.Format("{0:N0}", ViewBag.TotalFuelCost)</h3>
+                <p>Total Fuel Cost</p>
+                <small style="color:#fbbf24;">All Vehicles</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-gas-pump"></i> Fuel Usage Per Vehicle</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>License Plate</th>
+                        <th>Fuel Records</th>
+                        <th>Total Liters</th>
+                        <th>Avg Price/Liter</th>
+                        <th>Total Fuel Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in ViewBag.FuelReport)
+                    {
+                        <tr>
+                            <td><strong>@f.Make</strong> @f.Model</td>
+                            <td><code style="color:#818cf8;">@f.LicensePlate</code></td>
+                            <td style="color:#818cf8; font-weight:600;">@f.TotalRecords</td>
+                            <td style="color:#60a5fa;">@string.Format("{0:N1}", f.TotalLiters) L</td>
+                            <td>৳@string.Format("{0:N2}", f.AvgPerLiter)</td>
+                            <td style="color:#22c55e; font-weight:600;">৳@string.Format("{0:N0}", f.TotalCost)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

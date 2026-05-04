@@ -40,6 +40,27 @@ namespace FleetManagementSystem.Controllers
             ViewBag.ScheduledMaint = await _context.MaintenanceRecords.CountAsync(m => m.Status == "Scheduled");
             ViewBag.TotalMaintenanceCost = await _context.MaintenanceRecords.SumAsync(m => m.Cost);
 
+            // Fuel Stats
+            ViewBag.TotalFuelRecords = await _context.FuelRecords.CountAsync();
+            ViewBag.TotalFuelLiters = await _context.FuelRecords.SumAsync(f => f.LitersFilled);
+            ViewBag.TotalFuelCost = await _context.FuelRecords.SumAsync(f => f.TotalCost);
+
+            // Fuel per Vehicle
+            ViewBag.FuelReport = await _context.FuelRecords
+                .Include(f => f.Vehicle)
+                .GroupBy(f => new { f.VehicleId, f.Vehicle.Make, f.Vehicle.Model, f.Vehicle.LicensePlate })
+                .Select(g => new
+                {
+                    g.Key.Make,
+                    g.Key.Model,
+                    g.Key.LicensePlate,
+                    TotalRecords = g.Count(),
+                    TotalLiters = g.Sum(f => f.LitersFilled),
+                    TotalCost = g.Sum(f => f.TotalCost),
+                    AvgPerLiter = g.Average(f => (double)f.PricePerLiter)
+                })
+                .ToListAsync();
+
             // Vehicle Report
             ViewBag.VehicleReport = await _context.Vehicles
                 .Select(v => new

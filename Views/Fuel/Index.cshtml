@@ -1,0 +1,100 @@
+﻿@model IEnumerable<FleetManagementSystem.Models.FuelRecord>
+@{
+    ViewData["Title"] = "Fuel Logs";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success-bar">
+        <i class="fas fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+
+<!-- Fuel Stats -->
+<div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-card">
+        <div class="stat-icon indigo"><i class="fas fa-gas-pump"></i></div>
+        <div class="stat-info">
+            <h3>@ViewBag.TotalRecords</h3>
+            <p>Total Records</p>
+            <small style="color:#818cf8;">All Time</small>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-droplet"></i></div>
+        <div class="stat-info">
+            <h3>@string.Format("{0:N0}", ViewBag.TotalLiters) L</h3>
+            <p>Total Liters</p>
+            <small style="color:#22c55e;">Filled</small>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon yellow"><i class="fas fa-bangladeshi-taka-sign"></i></div>
+        <div class="stat-info">
+            <h3>৳@string.Format("{0:N0}", ViewBag.TotalFuelCost)</h3>
+            <p>Total Fuel Cost</p>
+            <small style="color:#fbbf24;">All Time</small>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-info">
+            <h3>৳@string.Format("{0:N2}", ViewBag.AvgPerLiter)</h3>
+            <p>Avg Price/Liter</p>
+            <small style="color:#f87171;">Average</small>
+        </div>
+    </div>
+</div>
+
+<!-- Fuel Table -->
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-gas-pump"></i> Fuel Records</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Add Record
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Vehicle</th>
+                    <th>Date</th>
+                    <th>Liters</th>
+                    <th>Price/Liter</th>
+                    <th>Total Cost</th>
+                    <th>Odometer</th>
+                    <th>Filled By</th>
+                    <th>Station</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model)
+                {
+                    <tr>
+                        <td><strong>@f.Vehicle.Make</strong> @f.Vehicle.Model</td>
+                        <td>@f.FuelDate.ToString("dd MMM yyyy")</td>
+                        <td style="color:#60a5fa;">@string.Format("{0:N1}", f.LitersFilled) L</td>
+                        <td>৳@string.Format("{0:N2}", f.PricePerLiter)</td>
+                        <td style="color:#22c55e; font-weight:600;">৳@string.Format("{0:N0}", f.TotalCost)</td>
+                        <td style="color:#94a3b8;">@string.Format("{0:N0}", f.OdometerReading) km</td>
+                        <td>@f.FilledBy</td>
+                        <td style="font-size:0.82rem; color:#94a3b8;">@f.StationName</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@f.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@f.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@f.Id" class="btn-ghost" style="font-size:0.8rem; color:#f87171;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

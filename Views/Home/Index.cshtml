@@ -50,6 +50,30 @@
     </div>
 
 </div>
+<!-- Fuel Stats Row -->
+<div class="grid-2" style="margin-bottom:24px;">
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-gas-pump"></i>
+        </div>
+        <div class="stat-info">
+            <h3>৳@string.Format("{0:N0}", ViewBag.TotalFuelCost)</h3>
+            <p>Total Fuel Cost</p>
+            <small style="color:#22c55e;">All Vehicles</small>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon indigo">
+            <i class="fas fa-droplet"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@string.Format("{0:N0}", ViewBag.TotalFuelLiters) L</h3>
+            <p>Total Fuel Used</p>
+            <small style="color:#818cf8;">All Vehicles</small>
+        </div>
+    </div>
+</div>
+
 
 <!-- Recent Trips + Maintenance -->
 <div class="grid-2">

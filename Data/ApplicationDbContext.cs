@@ -14,6 +14,7 @@ namespace FleetManagementSystem.Data
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Maintenance> MaintenanceRecords { get; set; }
+        public DbSet<FuelRecord> FuelRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +46,24 @@ namespace FleetManagementSystem.Data
                 .Property(m => m.Cost)
                 .HasPrecision(10, 2);
 
+            // Vehicle → FuelRecords (one-to-many)
+            modelBuilder.Entity<FuelRecord>()
+                .HasOne(f => f.Vehicle)
+                .WithMany(v => v.FuelRecords)
+                .HasForeignKey(f => f.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Decimal precision for FuelRecord
+            modelBuilder.Entity<FuelRecord>()
+                .Property(f => f.PricePerLiter)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<FuelRecord>()
+                .Property(f => f.TotalCost)
+                .HasPrecision(10, 2);
+
+            
+
             // ── Seed Data ──────────────────────────────────────────
 
             // Vehicles
@@ -73,6 +92,13 @@ namespace FleetManagementSystem.Data
                 new Maintenance { Id = 1, VehicleId = 3, ServiceType = "Engine Overhaul", ServiceDate = new DateTime(2024, 1, 20), NextServiceDate = new DateTime(2024, 7, 20), Notes = "Full engine check and oil change", Cost = 15000, Status = "Completed" },
                 new Maintenance { Id = 2, VehicleId = 1, ServiceType = "Tire Replacement", ServiceDate = new DateTime(2024, 2, 5), NextServiceDate = new DateTime(2025, 2, 5), Notes = "All 4 tires replaced", Cost = 8000, Status = "Completed" },
                 new Maintenance { Id = 3, VehicleId = 2, ServiceType = "Brake Service", ServiceDate = new DateTime(2024, 3, 1), NextServiceDate = null, Notes = "Brake pads inspection due", Cost = 0, Status = "Scheduled" }
+            );
+
+            // Fuel Records
+            modelBuilder.Entity<FuelRecord>().HasData(
+                new FuelRecord { Id = 1, VehicleId = 1, FuelDate = new DateTime(2024, 1, 10), LitersFilled = 45.5, PricePerLiter = 107, TotalCost = 4868.50m, OdometerReading = 32000, FilledBy = "Rahim Uddin", StationName = "Padma Filling Station", Notes = "Full tank" },
+                new FuelRecord { Id = 2, VehicleId = 2, FuelDate = new DateTime(2024, 1, 15), LitersFilled = 60.0, PricePerLiter = 107, TotalCost = 6420.00m, OdometerReading = 54000, FilledBy = "Karim Hossain", StationName = "Meghna Filling Station", Notes = "" },
+                new FuelRecord { Id = 3, VehicleId = 1, FuelDate = new DateTime(2024, 2, 1), LitersFilled = 40.0, PricePerLiter = 109, TotalCost = 4360.00m, OdometerReading = 32264, FilledBy = "Rahim Uddin", StationName = "Jamuna Filling Station", Notes = "After Chittagong trip" }
             );
         }
     }

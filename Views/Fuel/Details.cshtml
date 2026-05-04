@@ -1,0 +1,68 @@
+﻿@model FleetManagementSystem.Models.FuelRecord
+@{
+    ViewData["Title"] = "Fuel Record Details";
+}
+
+<div class="panel" style="max-width:700px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-gas-pump"></i> Fuel Record — @Model.Vehicle.Make @Model.Vehicle.Model</h5>
+        <div style="display:flex; gap:8px;">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-indigo">
+                <i class="fas fa-pen"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="grid-2">
+            <div class="detail-item">
+                <span class="detail-label">Vehicle</span>
+                <span class="detail-value">@Model.Vehicle.Make @Model.Vehicle.Model</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">License Plate</span>
+                <span class="detail-value" style="color:#818cf8;">@Model.Vehicle.LicensePlate</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fuel Date</span>
+                <span class="detail-value">@Model.FuelDate.ToString("dd MMM yyyy")</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Station</span>
+                <span class="detail-value">@Model.StationName</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Liters Filled</span>
+                <span class="detail-value" style="color:#60a5fa;">@string.Format("{0:N1}", Model.LitersFilled) L</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Price Per Liter</span>
+                <span class="detail-value">৳@string.Format("{0:N2}", Model.PricePerLiter)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Total Cost</span>
+                <span class="detail-value" style="color:#22c55e; font-size:1.2rem; font-weight:700;">
+                    ৳@string.Format("{0:N2}", Model.TotalCost)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Odometer Reading</span>
+                <span class="detail-value">@string.Format("{0:N0}", Model.OdometerReading) km</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Filled By</span>
+                <span class="detail-value">@Model.FilledBy</span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div style="margin-top:20px; padding:16px; background:#0f1117; border-radius:8px; border:1px solid #2d3150;">
+                <span class="detail-label">Notes</span>
+                <p style="color:#cbd5e1; margin-top:8px; font-size:0.9rem;">@Model.Notes</p>
+            </div>
+        }
+    </div>
+</div>

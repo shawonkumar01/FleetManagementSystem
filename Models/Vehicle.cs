@@ -25,5 +25,6 @@ namespace FleetManagementSystem.Models
 
         public ICollection<Trip> Trips { get; set; } = new List<Trip>();
         public ICollection<Maintenance> MaintenanceRecords { get; set; } = new List<Maintenance>();
+        public ICollection<FuelRecord> FuelRecords { get; set; } = new List<FuelRecord>();
     }
 }
