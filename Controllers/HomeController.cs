@@ -1,32 +1,44 @@
-using System.Diagnostics;
-using FleetManagementSystem.Models;
+using FleetManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewData["Title"] = "Dashboard";
+
+            ViewBag.TotalVehicles = await _context.Vehicles.CountAsync();
+            ViewBag.ActiveVehicles = await _context.Vehicles.CountAsync(v => v.Status == "Active");
+            ViewBag.TotalDrivers = await _context.Drivers.CountAsync();
+            ViewBag.ActiveDrivers = await _context.Drivers.CountAsync(d => d.Status == "Active");
+            ViewBag.TotalTrips = await _context.Trips.CountAsync();
+            ViewBag.OngoingTrips = await _context.Trips.CountAsync(t => t.Status == "InProgress");
+            ViewBag.PendingMaint = await _context.MaintenanceRecords.CountAsync(m => m.Status == "Scheduled");
+
+            ViewBag.RecentTrips = await _context.Trips
+                .Include(t => t.Vehicle)
+                .Include(t => t.Driver)
+                .OrderByDescending(t => t.StartTime)
+                .Take(5)
+                .ToListAsync();
+
+            ViewBag.RecentMaintenance = await _context.MaintenanceRecords
+                .Include(m => m.Vehicle)
+                .OrderByDescending(m => m.ServiceDate)
+                .Take(5)
+                .ToListAsync();
+
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

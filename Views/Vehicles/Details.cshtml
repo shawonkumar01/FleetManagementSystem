@@ -1,0 +1,120 @@
+﻿@model FleetManagementSystem.Models.Vehicle
+@{
+    ViewData["Title"] = "Vehicle Details";
+}
+
+<div style="display:flex; gap:20px; flex-direction:column;">
+
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-car"></i> @Model.Make @Model.Model (@Model.Year)</h5>
+            <div style="display:flex; gap:8px;">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-indigo">
+                    <i class="fas fa-pen"></i> Edit
+                </a>
+                <a asp-action="Index" class="btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="grid-2">
+                <div class="detail-item">
+                    <span class="detail-label">License Plate</span>
+                    <span class="detail-value" style="color:#818cf8;">@Model.LicensePlate</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="badge @(Model.Status == "Active" ? "badge-active" : Model.Status == "InMaintenance" ? "badge-maintenance" : "badge-inactive")">
+                        @Model.Status
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Mileage</span>
+                    <span class="detail-value">@Model.Mileage.ToString("N0") km</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Year</span>
+                    <span class="detail-value">@Model.Year</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Trips -->
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-route"></i> Recent Trips</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            @if (Model.Trips.Any())
+            {
+                <table class="fleet-table">
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Distance</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Trips)
+                        {
+                            <tr>
+                                <td>@t.Driver?.FirstName @t.Driver?.LastName</td>
+                                <td>@t.Origin</td>
+                                <td>@t.Destination</td>
+                                <td>@t.DistanceKm km</td>
+                                <td><span class="badge badge-completed">@t.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="padding:20px; color:#64748b;">No trips recorded.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Maintenance Records -->
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-wrench"></i> Maintenance Records</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            @if (Model.MaintenanceRecords.Any())
+            {
+                <table class="fleet-table">
+                    <thead>
+                        <tr>
+                            <th>Service Type</th>
+                            <th>Date</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model.MaintenanceRecords)
+                        {
+                            <tr>
+                                <td>@m.ServiceType</td>
+                                <td>@m.ServiceDate.ToString("dd MMM yyyy")</td>
+                                <td>৳@m.Cost.ToString("N0")</td>
+                                <td><span class="badge badge-completed">@m.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p style="padding:20px; color:#64748b;">No maintenance records.</p>
+            }
+        </div>
+    </div>
+
+</div>

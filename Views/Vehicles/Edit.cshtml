@@ -1,0 +1,64 @@
+﻿@model FleetManagementSystem.Models.Vehicle
+@{
+    ViewData["Title"] = "Edit Vehicle";
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-pen"></i> Edit — @Model.Make @Model.Model</h5>
+        <a asp-action="Index" class="btn-ghost"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:12px;"></div>
+
+            <div class="form-group">
+                <label asp-for="Make" class="form-label">Make</label>
+                <input asp-for="Make" class="form-input" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Model" class="form-label">Model</label>
+                <input asp-for="Model" class="form-input" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Year" class="form-label">Year</label>
+                <input asp-for="Year" class="form-input" type="number" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LicensePlate" class="form-label">License Plate</label>
+                <input asp-for="LicensePlate" class="form-input" />
+                <span asp-validation-for="LicensePlate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Mileage" class="form-label">Mileage (km)</label>
+                <input asp-for="Mileage" class="form-input" type="number" />
+                <span asp-validation-for="Mileage" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-input">
+                    <option value="Active">Active</option>
+                    <option value="InMaintenance">In Maintenance</option>
+                    <option value="Retired">Retired</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-save"></i> Update Vehicle
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

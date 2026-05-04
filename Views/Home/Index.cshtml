@@ -1,8 +1,133 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Stat Cards -->
+<div class="grid-4" style="margin-bottom:24px;">
+
+    <div class="stat-card">
+        <div class="stat-icon indigo">
+            <i class="fas fa-car"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@ViewBag.TotalVehicles</h3>
+            <p>Total Vehicles</p>
+            <small style="color:#818cf8;">@ViewBag.ActiveVehicles Active</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-id-card"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@ViewBag.TotalDrivers</h3>
+            <p>Total Drivers</p>
+            <small style="color:#22c55e;">@ViewBag.ActiveDrivers Active</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <i class="fas fa-route"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@ViewBag.TotalTrips</h3>
+            <p>Total Trips</p>
+            <small style="color:#fbbf24;">@ViewBag.OngoingTrips In Progress</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon red">
+            <i class="fas fa-wrench"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@ViewBag.PendingMaint</h3>
+            <p>Maintenance</p>
+            <small style="color:#f87171;">Scheduled</small>
+        </div>
+    </div>
+
+</div>
+
+<!-- Recent Trips + Maintenance -->
+<div class="grid-2">
+
+    <!-- Recent Trips -->
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-route"></i> Recent Trips</h5>
+            <a asp-controller="Trips" asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                View All
+            </a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                        <th>Route</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in ViewBag.RecentTrips)
+                    {
+                        <tr>
+                            <td>@t.Vehicle.Make @t.Vehicle.Model</td>
+                            <td>@t.Driver.FirstName</td>
+                            <td style="font-size:0.82rem; color:#94a3b8;">
+                                @t.Origin → @t.Destination
+                            </td>
+                            <td>
+                                <span class="badge @(t.Status == "Completed" ? "badge-completed" : t.Status == "InProgress" ? "badge-active" : "badge-planned")">
+                                    @t.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Maintenance -->
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-wrench"></i> Recent Maintenance</h5>
+            <a asp-controller="Maintenance" asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                View All
+            </a>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Service</th>
+                        <th>Cost</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in ViewBag.RecentMaintenance)
+                    {
+                        <tr>
+                            <td>@m.Vehicle.Make @m.Vehicle.Model</td>
+                            <td style="font-size:0.82rem;">@m.ServiceType</td>
+                            <td style="color:#22c55e;">৳@m.Cost.ToString("N0")</td>
+                            <td>
+                                <span class="badge @(m.Status == "Completed" ? "badge-completed" : m.Status == "Scheduled" ? "badge-planned" : "badge-overdue")">
+                                    @m.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
