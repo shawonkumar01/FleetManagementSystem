@@ -85,7 +85,7 @@ static async Task SeedAdminUser(IServiceProvider services)
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
     // Ensure roles exist
-    string[] roles = { "Admin", "Manager", "Driver" };
+    string[] roles = { "Admin", "Manager", "Driver", "User" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
