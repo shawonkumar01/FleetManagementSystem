@@ -1,0 +1,57 @@
+@model VehicleAssignment
+@{
+    ViewData["Title"] = "Assignment Details";
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-info-circle"></i> Assignment Details</h5>
+    </div>
+    <div class="panel-body">
+        <div class="detail-item">
+            <span class="detail-label">Vehicle</span>
+            <span class="detail-value">@Model.Vehicle.Make @Model.Vehicle.Model (@Model.Vehicle.LicensePlate)</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Driver</span>
+            <span class="detail-value">@Model.Driver.FirstName @Model.Driver.LastName</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Assigned Date</span>
+            <span class="detail-value">@Model.AssignedDate.ToString("MMMM dd, yyyy HH:mm")</span>
+        </div>
+
+        @if (Model.EndDate.HasValue)
+        {
+            <div class="detail-item">
+                <span class="detail-label">End Date</span>
+                <span class="detail-value">@Model.EndDate.Value.ToString("MMMM dd, yyyy HH:mm")</span>
+            </div>
+        }
+
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+                <span class="badge @(Model.Status == "Active" ? "badge-active" : "badge-inactive")">
+                    @Model.Status
+                </span>
+            </span>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="detail-item">
+                <span class="detail-label">Notes</span>
+                <span class="detail-value">@Model.Notes</span>
+            </div>
+        }
+
+        <div style="margin-top:24px;">
+            <a asp-action="Index" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>

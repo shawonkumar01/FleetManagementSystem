@@ -17,6 +17,8 @@ namespace FleetManagementSystem.Data
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Maintenance> MaintenanceRecords { get; set; }
         public DbSet<FuelRecord> FuelRecords { get; set; }
+        public DbSet<VehicleAssignment> VehicleAssignments { get; set; }
+        public DbSet<Alert> Alerts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +56,19 @@ namespace FleetManagementSystem.Data
                 .WithMany(v => v.FuelRecords)
                 .HasForeignKey(f => f.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // VehicleAssignment relationships
+            modelBuilder.Entity<VehicleAssignment>()
+                .HasOne(va => va.Vehicle)
+                .WithMany()
+                .HasForeignKey(va => va.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<VehicleAssignment>()
+                .HasOne(va => va.Driver)
+                .WithMany()
+                .HasForeignKey(va => va.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Decimal precision for FuelRecord
             modelBuilder.Entity<FuelRecord>()

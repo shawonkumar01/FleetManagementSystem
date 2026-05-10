@@ -1,6 +1,7 @@
 using FleetManagementSystem.Data;
 using FleetManagementSystem.Hubs;
 using FleetManagementSystem.Models;
+using FleetManagementSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Add SignalR
 builder.Services.AddSignalR();
+
+// Add AlertService
+builder.Services.AddScoped<AlertService>();
 
 var app = builder.Build();
 

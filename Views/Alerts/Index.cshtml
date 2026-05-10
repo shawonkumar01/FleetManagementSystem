@@ -1,0 +1,101 @@
+@model IEnumerable<Alert>
+@{
+    ViewData["Title"] = "Alerts";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-bell"></i> Alerts</h5>
+        <div>
+            <button class="btn-ghost" onclick="runAlertChecks()">
+                <i class="fas fa-sync"></i> Run Checks
+            </button>
+            <button class="btn-ghost" onclick="markAllRead()">
+                <i class="fas fa-check-double"></i> Mark All Read
+            </button>
+        </div>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        @if (!Model.Any())
+        {
+            <div style="padding:40px; text-align:center; color:#94a3b8;">
+                <i class="fas fa-bell-slash" style="font-size:3rem; margin-bottom:16px;"></i>
+                <p>No alerts found.</p>
+            </div>
+        }
+        else
+        {
+            <div style="max-height:500px; overflow-y:auto;">
+                @foreach (var alert in Model)
+                {
+                    <div class="alert-item @(alert.IsRead ? "read" : "unread")" data-id="@alert.Id" style="
+                        padding:16px 20px;
+                        border-bottom:1px solid #2d3150;
+                        display:flex;
+                        align-items:flex-start;
+                        gap:12px;
+                        cursor:pointer;
+                        @(!alert.IsRead ? "background:#252842;" : "")">
+                        
+                        <div class="alert-icon" style="
+                            width:40px;
+                            height:40px;
+                            border-radius:8px;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            background:@(alert.Type == "Danger" ? "#7f1d1d" : alert.Type == "Warning" ? "#713f12" : "#1e3a5f");
+                            color:@(alert.Type == "Danger" ? "#f87171" : alert.Type == "Warning" ? "#fbbf24" : "#60a5fa");">
+                            <i class="fas fa-@(alert.Category == "License" ? "id-card" : alert.Category == "Maintenance" ? "wrench" : "info-circle")"></i>
+                        </div>
+                        
+                        <div style="flex:1;">
+                            <div style="display:flex; justify-content:space-between; align-items:start;">
+                                <h6 style="margin:0; font-size:0.95rem; color:#e2e8f0;">@alert.Title</h6>
+                                <span style="font-size:0.75rem; color:#64748b;">@alert.CreatedAt.ToString("MMM dd, HH:mm")</span>
+                            </div>
+                            <p style="margin:4px 0 0 0; font-size:0.85rem; color:#94a3b8;">@alert.Message</p>
+                            <div style="margin-top:8px;">
+                                <span class="badge @(alert.Type == "Danger" ? "badge-overdue" : alert.Type == "Warning" ? "badge-planned" : "badge-completed")">@alert.Type</span>
+                                <span class="badge badge-planned">@alert.Category</span>
+                            </div>
+                        </div>
+                        
+                        @if (!alert.IsRead)
+                        {
+                            <button onclick="markRead(event, @alert.Id)" class="btn-ghost" style="padding:4px 8px; font-size:0.75rem;">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markRead(event, id) {
+            event.stopPropagation();
+            fetch('/Alerts/MarkAsRead/' + id, { method: 'POST' })
+                .then(r => r.json())
+                .then(() => location.reload());
+        }
+
+        function markAllRead() {
+            fetch('/Alerts/MarkAllAsRead', { method: 'POST' })
+                .then(r => r.json())
+                .then(() => location.reload());
+        }
+
+        function runAlertChecks() {
+            fetch('/Alerts/RunChecks', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => {
+                    alert(d.message);
+                    location.reload();
+                });
+        }
+    </script>
+}
