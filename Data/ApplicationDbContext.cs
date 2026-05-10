@@ -25,6 +25,9 @@ namespace FleetManagementSystem.Data
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<ExpenseApproval> ExpenseApprovals { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentCategory> DocumentCategories { get; set; }
+        public DbSet<DocumentAccessLog> DocumentAccessLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -168,6 +171,31 @@ namespace FleetManagementSystem.Data
                 .HasOne(ea => ea.Expense)
                 .WithMany()
                 .HasForeignKey(ea => ea.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Document relationships
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.Vehicle)
+                .WithMany()
+                .HasForeignKey(d => d.VehicleId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.Driver)
+                .WithMany()
+                .HasForeignKey(d => d.DriverId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.ParentDocument)
+                .WithMany(d => d.Versions)
+                .HasForeignKey(d => d.ParentDocumentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DocumentAccessLog>()
+                .HasOne(l => l.Document)
+                .WithMany()
+                .HasForeignKey(l => l.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // ── Seed Data ──────────────────────────────────────────
