@@ -1,0 +1,99 @@
+@model IEnumerable<Geofence>
+@{
+    ViewData["Title"] = "Geofence Management";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-draw-polygon"></i> Geofence Zones</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Create Geofence
+        </a>
+    </div>
+    <div class="panel-body">
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:40px; color:#94a3b8;">
+                <i class="fas fa-draw-polygon" style="font-size:3rem; margin-bottom:16px;"></i>
+                <p>No geofence zones created yet.</p>
+                <a asp-action="Create" class="btn-indigo">
+                    <i class="fas fa-plus"></i> Create First Geofence
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                @foreach (var geofence in Model)
+                {
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h6><i class="fas fa-map-marked-alt"></i> @geofence.Name</h6>
+                            <span class="badge @(geofence.IsActive ? "badge-active" : "badge-completed")">
+                                @geofence.Type
+                            </span>
+                        </div>
+                        <div class="panel-body">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:30%; color:#94a3b8;">Type:</td>
+                                    <td>@geofence.Type</td>
+                                </tr>
+                                @if (geofence.Type == "Circle" && geofence.CenterLatitude.HasValue && geofence.CenterLongitude.HasValue && geofence.Radius.HasValue)
+                                {
+                                    <tr>
+                                        <td style="color:#94a3b8;">Center:</td>
+                                        <td>@geofence.CenterLatitude.Value.ToString("F4")°, @geofence.CenterLongitude.Value.ToString("F4")°</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#94a3b8;">Radius:</td>
+                                        <td>@geofence.Radius.Value meters</td>
+                                    </tr>
+                                }
+                                else if (!string.IsNullOrEmpty(geofence.Coordinates))
+                                {
+                                    <tr>
+                                        <td style="color:#94a3b8;">Coordinates:</td>
+                                        <td><code>@geofence.Coordinates</code></td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td style="color:#94a3b8;">Alert Type:</td>
+                                    <td>@geofence.AlertType</td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#94a3b8;">Status:</td>
+                                    <td>
+                                        <span class="badge @(geofence.IsActive ? "badge-active" : "badge-completed")">
+                                            @(geofence.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                </tr>
+                                @if (!string.IsNullOrEmpty(geofence.Description))
+                                {
+                                    <tr>
+                                        <td style="color:#94a3b8;">Description:</td>
+                                        <td>@geofence.Description</td>
+                                    </tr>
+                                }
+                            </table>
+
+                            <div style="display:flex; gap:8px; margin-top:16px;">
+                                <a asp-action="Edit" asp-route-id="@geofence.Id" class="btn-ghost" style="font-size:0.8rem;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@geofence.Id" class="btn-ghost" style="font-size:0.8rem; color:#f87171;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+</style>

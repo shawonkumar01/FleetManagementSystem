@@ -67,6 +67,18 @@
                         <i class="fas fa-link"></i> Assignments
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="GPSTracking" asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "GPSTracking" ? "active" : "")">
+                        <i class="fas fa-map-marked-alt"></i> GPS Tracking
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Geofence" asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Geofence" ? "active" : "")">
+                        <i class="fas fa-draw-polygon"></i> Geofences
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">

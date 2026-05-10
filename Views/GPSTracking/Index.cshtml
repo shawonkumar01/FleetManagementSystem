@@ -1,0 +1,50 @@
+@model IEnumerable<Vehicle>
+@{
+    ViewData["Title"] = "GPS Tracking";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-map-marked-alt"></i> GPS Tracking Overview</h5>
+        <a asp-action="LiveMap" class="btn-indigo" style="font-size:0.8rem;">
+            <i class="fas fa-map"></i> Live Map
+        </a>
+    </div>
+    <div class="panel-body">
+        <div class="grid-3" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px; margin-bottom:24px;">
+            @foreach (var vehicle in Model)
+            {
+                var latestLocation = ViewBag.LatestLocations as List<GPSTracking>;
+                var vehicleLocation = latestLocation?.FirstOrDefault(l => l.VehicleId == vehicle.Id);
+                
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-map-pin"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h5>@vehicle.Make @vehicle.Model</h5>
+                        <p>@vehicle.LicensePlate</p>
+                        <small style="color:#94a3b8;">
+                            @if (vehicleLocation != null)
+                            {
+                                <span><i class="fas fa-circle text-success"></i> Active</span>
+                                <br />
+                                <span>Last: @vehicleLocation.Timestamp.ToString("MMM dd, HH:mm")</span>
+                                <br />
+                                <span>Speed: @(vehicleLocation.Speed?.ToString("F1") ?? "N/A") km/h</span>
+                            }
+                            else
+                            {
+                                <span><i class="fas fa-circle text-muted"></i> No Signal</span>
+                            }
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+</style>

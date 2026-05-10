@@ -19,6 +19,9 @@ namespace FleetManagementSystem.Data
         public DbSet<FuelRecord> FuelRecords { get; set; }
         public DbSet<VehicleAssignment> VehicleAssignments { get; set; }
         public DbSet<Alert> Alerts { get; set; }
+        public DbSet<GPSTracking> GPSTracking { get; set; }
+        public DbSet<Geofence> Geofences { get; set; }
+        public DbSet<GeofenceAlert> GeofenceAlerts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +83,59 @@ namespace FleetManagementSystem.Data
                 .HasPrecision(10, 2);
 
             
+            // GPS Tracking relationships and precision
+            modelBuilder.Entity<GPSTracking>()
+                .HasOne(gt => gt.Vehicle)
+                .WithMany(v => v.GPSTrackings)
+                .HasForeignKey(gt => gt.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Decimal precision for GPS coordinates
+            modelBuilder.Entity<GPSTracking>()
+                .Property(gt => gt.Latitude)
+                .HasPrecision(10, 8);
+
+            modelBuilder.Entity<GPSTracking>()
+                .Property(gt => gt.Longitude)
+                .HasPrecision(11, 8);
+
+            modelBuilder.Entity<GPSTracking>()
+                .Property(gt => gt.Heading)
+                .HasPrecision(5, 2);
+
+            modelBuilder.Entity<GPSTracking>()
+                .Property(gt => gt.Speed)
+                .HasPrecision(5, 2);
+
+            modelBuilder.Entity<GPSTracking>()
+                .Property(gt => gt.Altitude)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<GeofenceAlert>()
+                .HasOne(ga => ga.Geofence)
+                .WithMany(g => g.GeofenceAlerts)
+                .HasForeignKey(ga => ga.GeofenceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GeofenceAlert>()
+                .HasOne(ga => ga.GPSTracking)
+                .WithMany(gt => gt.GeofenceAlerts)
+                .HasForeignKey(ga => ga.GPSTrackingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Decimal precision for Geofence coordinates
+            modelBuilder.Entity<Geofence>()
+                .Property(g => g.CenterLatitude)
+                .HasPrecision(10, 8);
+
+            modelBuilder.Entity<Geofence>()
+                .Property(g => g.CenterLongitude)
+                .HasPrecision(11, 8);
+
+            modelBuilder.Entity<Geofence>()
+                .Property(g => g.Radius)
+                .HasPrecision(10, 2);
+
             // ── Seed Data ──────────────────────────────────────────
 
             // Vehicles

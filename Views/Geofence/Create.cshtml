@@ -1,0 +1,111 @@
+@model Geofence
+@{
+    ViewData["Title"] = "Create Geofence";
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-draw-polygon"></i> Create Geofence Zone</h5>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:16px;"></div>
+
+            <div class="form-group">
+                <label class="form-label">Geofence Name</label>
+                <input asp-for="Name" class="form-input" placeholder="e.g., Office Area" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select asp-for="Type" class="form-input" required>
+                    <option value="">Select Type</option>
+                    <option value="Circle">Circle</option>
+                    <option value="Rectangle">Rectangle</option>
+                    <option value="Polygon">Polygon</option>
+                </select>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+
+            <!-- Circle Geofence Fields -->
+            <div id="circle-fields">
+                <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">Center Latitude</label>
+                        <input asp-for="CenterLatitude" class="form-input" type="number" step="0.000001" placeholder="23.8103" />
+                        <span asp-validation-for="CenterLatitude" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Center Longitude</label>
+                        <input asp-for="CenterLongitude" class="form-input" type="number" step="0.000001" placeholder="90.4125" />
+                        <span asp-validation-for="CenterLongitude" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Radius (meters)</label>
+                    <input asp-for="Radius" class="form-input" type="number" min="1" placeholder="500" />
+                    <span asp-validation-for="Radius" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Polygon/Rectangle Geofence Fields -->
+            <div id="polygon-fields" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label">Coordinates (JSON)</label>
+                    <textarea asp-for="Coordinates" class="form-input" rows="4" placeholder='[{"lat": 23.8103, "lng": 90.4125}, {"lat": 23.8110, "lng": 90.4130}]'></textarea>
+                    <small style="color:#64748b;">Format: [{"lat": 23.8103, "lng": 90.4125}, ...]</small>
+                    <span asp-validation-for="Coordinates" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Alert Type</label>
+                <select asp-for="AlertType" class="form-input" required>
+                    <option value="">Select Alert Type</option>
+                    <option value="Enter">Enter Only</option>
+                    <option value="Exit">Exit Only</option>
+                    <option value="Both">Enter & Exit</option>
+                </select>
+                <span asp-validation-for="AlertType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-input" rows="3" placeholder="Optional description..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-save"></i> Create Geofence
+                </button>
+                <a asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelector('[asp-for="Type"]').addEventListener('change', function() {
+        var circleFields = document.getElementById('circle-fields');
+        var polygonFields = document.getElementById('polygon-fields');
+        
+        if (this.value === 'Circle') {
+            circleFields.style.display = 'block';
+            polygonFields.style.display = 'none';
+        } else {
+            circleFields.style.display = 'none';
+            polygonFields.style.display = 'block';
+        }
+    });
+
+    // Show appropriate fields based on current selection
+    var currentType = document.querySelector('[asp-for="Type"]').value;
+    if (currentType !== 'Circle') {
+        document.getElementById('polygon-fields').style.display = 'block';
+    }
+</script>
+
+<style>
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+</style>

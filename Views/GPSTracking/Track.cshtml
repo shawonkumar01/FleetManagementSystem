@@ -1,0 +1,154 @@
+@model Vehicle
+@{
+    ViewData["Title"] = $"Track {Model.Make} {Model.Model}";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-map-marked-alt"></i> Track @Model.Make @Model.Model</h5>
+        <a asp-action="History" asp-route-id="@Model.Id" class="btn-ghost" style="font-size:0.8rem;">
+            <i class="fas fa-history"></i> View History
+        </a>
+    </div>
+    <div class="panel-body">
+        <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+            <!-- Vehicle Info -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-info-circle"></i> Vehicle Information</h6>
+                </div>
+                <div class="panel-body">
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="width:40%; color:#94a3b8;">Make & Model:</td>
+                            <td><strong>@Model.Make @Model.Model</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#94a3b8;">License Plate:</td>
+                            <td><strong>@Model.LicensePlate</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#94a3b8;">Status:</td>
+                            <td><span class="badge @(Model.Status == "Active" ? "badge-active" : Model.Status == "InMaintenance" ? "badge-planned" : "badge-completed")">@Model.Status</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#94a3b8;">Current Mileage:</td>
+                            <td><strong>@Model.Mileage.ToString("N0") km</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Locations -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h6><i class="fas fa-location-arrow"></i> Recent GPS Locations</h6>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <div id="location-map" style="height:400px; width:100%; border-radius:8px; margin-bottom:16px;"></div>
+                    
+                    <table class="fleet-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Speed</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.GPSTrackings != null && Model.GPSTrackings.Any())
+                            {
+                                @foreach (var location in Model.GPSTrackings.OrderByDescending(gt => gt.Timestamp).Take(10))
+                                {
+                                    <tr>
+                                        <td>@location.Timestamp.ToString("MMM dd, HH:mm")</td>
+                                        <td>
+                                            <strong>@location.Latitude.ToString("F4")</strong>, 
+                                            <strong>@location.Longitude.ToString("F4")</strong>
+                                        </td>
+                                        <td>
+                                            @if (location.Speed.HasValue)
+                                            {
+                                                <span style="color:#22c55e;">@(location.Speed.Value.ToString("F1")) km/h</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#94a3b8;">N/A</span>
+                                            }
+                                        </td>
+                                        <td>@(location.Address ?? "-")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:#94a3b8; padding:20px;">
+                                        <i class="fas fa-satellite-dish" style="font-size:2rem; margin-bottom:8px;"></i>
+                                        <p>No GPS data available for this vehicle</p>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map;
+    let markers = [];
+
+    function initLocationMap() {
+        map = L.map('location-map').setView([23.8103, 90.4125], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Add vehicle locations to map
+        @if (Model.GPSTrackings != null)
+        {
+            @foreach (var location in Model.GPSTrackings.OrderByDescending(gt => gt.Timestamp).Take(20))
+            {
+                <text>
+                const marker = L.marker([@location.Latitude, @location.Longitude]).addTo(map);
+                
+                const popupContent = `
+                    <div style="min-width:200px;">
+                        <strong>@location.Timestamp.ToString("MMM dd, HH:mm")</strong><br>
+                        <i class="fas fa-tachometer-alt"></i> @(location.Speed?.ToString("F1") ?? "N/A") km/h<br>
+                        @if (!string.IsNullOrEmpty(location.Address))
+                        {
+                            <text>@location.Address</text>
+                        }
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                markers.push(marker);
+            </text>
+            }
+        }
+
+        // Fit map to show all markers
+        if (markers.length > 0) {
+            const group = new L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
+    }
+
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initLocationMap);
+</script>
+
+<style>
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+</style>

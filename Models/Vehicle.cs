@@ -23,8 +23,10 @@ namespace FleetManagementSystem.Models
 
         public int Mileage { get; set; }
 
+        // Navigation properties
         public ICollection<Trip> Trips { get; set; } = new List<Trip>();
         public ICollection<Maintenance> MaintenanceRecords { get; set; } = new List<Maintenance>();
         public ICollection<FuelRecord> FuelRecords { get; set; } = new List<FuelRecord>();
+        public ICollection<GPSTracking> GPSTrackings { get; set; } = new List<GPSTracking>();
     }
 }

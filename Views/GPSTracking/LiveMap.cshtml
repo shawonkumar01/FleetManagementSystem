@@ -1,0 +1,97 @@
+@model IEnumerable<Vehicle>
+@{
+    ViewData["Title"] = "Live GPS Map";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-map"></i> Live Vehicle Tracking</h5>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button onclick="refreshMap()" class="btn-indigo" style="font-size:0.8rem;">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <span id="last-update" style="color:#94a3b8; font-size:0.8rem;">
+                Last updated: @DateTime.Now.ToString("HH:mm:ss")
+            </span>
+        </div>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <div id="map" style="height:600px; width:100%; border-radius:8px;"></div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map;
+    let markers = {};
+    let updateInterval;
+
+    function initMap() {
+        map = L.map('map').setView([23.8103, 90.4125], 7); // Bangladesh center
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        loadVehicles();
+        startAutoRefresh();
+    }
+
+    function loadVehicles() {
+        fetch('/GPSTracking/GetLatestLocations')
+            .then(response => response.json())
+            .then(data => {
+                // Clear existing markers
+                Object.values(markers).forEach(marker => {
+                    map.removeLayer(marker);
+                });
+                markers = {};
+
+                // Add new markers
+                data.forEach(vehicle => {
+                    if (vehicle.gpsTracking && vehicle.gpsTracking.latitude && vehicle.gpsTracking.longitude) {
+                        const marker = L.marker([
+                            vehicle.gpsTracking.latitude,
+                            vehicle.gpsTracking.longitude
+                        ]).addTo(map);
+
+                        const popupContent = `
+                            <div style="min-width:200px;">
+                                <strong>${vehicle.make} ${vehicle.model}</strong><br>
+                                <small>${vehicle.licensePlate}</small><br>
+                                <i class="fas fa-tachometer-alt"></i> ${vehicle.gpsTracking.speed || 'N/A'} km/h<br>
+                                <i class="fas fa-clock"></i> ${new Date(vehicle.gpsTracking.timestamp).toLocaleString()}
+                            </div>
+                        `;
+
+                        marker.bindPopup(popupContent);
+                        markers[vehicle.id] = marker;
+                    }
+                });
+
+                document.getElementById('last-update').textContent = 
+                    `Last updated: ${new Date().toLocaleTimeString()}`;
+            });
+    }
+
+    function startAutoRefresh() {
+        updateInterval = setInterval(loadVehicles, 30000); // Refresh every 30 seconds
+    }
+
+    function refreshMap() {
+        loadVehicles();
+    }
+
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        if (updateInterval) {
+            clearInterval(updateInterval);
+        }
+    });
+</script>

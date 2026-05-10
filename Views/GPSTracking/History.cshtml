@@ -1,0 +1,147 @@
+@model IEnumerable<GPSTracking>
+@{
+    ViewData["Title"] = "GPS History";
+    var vehicle = ViewBag.Vehicle as Vehicle;
+    var fromDate = ViewBag.FromDate as DateTime?;
+    var toDate = ViewBag.ToDate as DateTime?;
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-history"></i> GPS History - @vehicle?.Make @vehicle?.Model</h5>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <form asp-action="History" asp-route-id="@vehicle?.Id" method="get" style="display:flex; gap:8px;">
+                <input type="date" name="from" value="@fromDate?.ToString("yyyy-MM-dd")" class="form-input" style="width:auto;" />
+                <span style="color:#94a3b8;">to</span>
+                <input type="date" name="to" value="@toDate?.ToString("yyyy-MM-dd")" class="form-input" style="width:auto;" />
+                <button type="submit" class="btn-indigo" style="font-size:0.8rem;">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </form>
+            <a asp-action="ExportHistory" asp-route-id="@vehicle?.Id" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-download"></i> Export
+            </a>
+        </div>
+    </div>
+    <div class="panel-body">
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:40px; color:#94a3b8;">
+                <i class="fas fa-satellite-dish" style="font-size:3rem; margin-bottom:16px;"></i>
+                <p>No GPS tracking data found for the selected period.</p>
+            </div>
+        }
+        else
+        {
+            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <!-- Map -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h6><i class="fas fa-map"></i> Location Map</h6>
+                    </div>
+                    <div class="panel-body" style="padding:0;">
+                        <div id="history-map" style="height:400px; width:100%; border-radius:8px;"></div>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h6><i class="fas fa-table"></i> Location Details</h6>
+                    </div>
+                    <div class="panel-body" style="padding:0;">
+                        <table class="fleet-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Coordinates</th>
+                                    <th>Speed</th>
+                                    <th>Address</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var location in Model)
+                                {
+                                    <tr>
+                                        <td>@location.Timestamp.ToString("MMM dd, HH:mm")</td>
+                                        <td>
+                                            <strong>@location.Latitude.ToString("F4")</strong>, 
+                                            <strong>@location.Longitude.ToString("F4")</strong>
+                                        </td>
+                                        <td>
+                                            @if (location.Speed.HasValue)
+                                            {
+                                                <span style="color:#22c55e;">@(location.Speed.Value.ToString("F1")) km/h</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#94a3b8;">N/A</span>
+                                            }
+                                        </td>
+                                        <td>@(location.Address ?? "-")</td>
+                                        <td style="font-size:0.85rem;">@(location.Notes ?? "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }</div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map;
+    let markers = [];
+
+    function initHistoryMap() {
+        map = L.map('history-map').setView([23.8103, 90.4125], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Add location markers
+        <text>
+        @foreach (var location in Model)
+        {
+            <text>
+                const marker = L.marker([@location.Latitude, @location.Longitude]).addTo(map);
+                
+                const popupContent = `
+                    <div style="min-width:200px;">
+                        <strong>${location.Timestamp.toLocaleString()}</strong><br>
+                        <i class="fas fa-tachometer-alt"></i> ${location.speed || 'N/A'} km/h<br>
+                        @if (!string.IsNullOrEmpty(location.Address))
+                        {
+                            <text>@location.Address</text>
+                        }
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                markers.push(marker);
+            </text>
+        }
+        </text>
+
+        // Fit map to show all markers
+        if (markers.length > 0) {
+            const group = new L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
+    }
+
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initHistoryMap);
+</script>
+
+<style>
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+</style>
