@@ -29,6 +29,7 @@ namespace FleetManagementSystem.Controllers
             ViewBag.Vehicles = vehicles;
             ViewBag.PreselectedVehicleId = vehicleId;
 
+            ViewData["Layout"] = "_UserLayout";
             return View();
         }
 
@@ -98,6 +99,7 @@ namespace FleetManagementSystem.Controllers
 
             if (document == null) return NotFound();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(document);
         }
 

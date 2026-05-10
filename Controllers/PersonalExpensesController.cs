@@ -35,6 +35,7 @@ namespace FleetManagementSystem.Controllers
                 .OrderByDescending(pe => pe.ExpenseDate)
                 .ToListAsync();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(expenses);
         }
 
@@ -49,6 +50,7 @@ namespace FleetManagementSystem.Controllers
             ViewBag.PreselectedVehicleId = vehicleId;
             ViewBag.PreselectedType = type;
 
+            ViewData["Layout"] = "_UserLayout";
             return View();
         }
 
@@ -97,6 +99,7 @@ namespace FleetManagementSystem.Controllers
 
             if (expense == null) return NotFound();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(expense);
         }
 
@@ -158,6 +161,7 @@ namespace FleetManagementSystem.Controllers
             ViewBag.TotalMaintenance = expenses.Where(e => e.ExpenseType == "Maintenance" || e.ExpenseType == "Service").Sum(e => e.Amount);
             ViewBag.TotalLiters = expenses.Where(e => e.ExpenseType == "Fuel").Sum(e => e.Liters ?? 0);
 
+            ViewData["Layout"] = "_UserLayout";
             return View(expenses);
         }
     }

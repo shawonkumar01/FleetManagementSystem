@@ -1,6 +1,7 @@
 @model PersonalExpense
 @{
     ViewData["Title"] = "Delete Expense";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="panel" style="max-width:500px;">

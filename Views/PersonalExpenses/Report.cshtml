@@ -1,6 +1,7 @@
 @model IEnumerable<PersonalExpense>
 @{
     ViewData["Title"] = "Expense Report - " + ViewBag.Vehicle.Name;
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
     var vehicle = ViewBag.Vehicle as PersonalVehicle;
     var monthlyData = ViewBag.MonthlyData as dynamic;
 }

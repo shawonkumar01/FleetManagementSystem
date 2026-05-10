@@ -1,6 +1,7 @@
 @model PersonalVehicle
 @{
     ViewData["Title"] = Model.Name;
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
     var currentMonth = DateTime.Now.ToString("MMMM yyyy");
 }
 

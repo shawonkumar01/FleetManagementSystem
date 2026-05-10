@@ -1,6 +1,7 @@
 @model PersonalVehicleDocument
 @{
     ViewData["Title"] = "Upload Document";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
     var vehicles = ViewBag.Vehicles as List<PersonalVehicle>;
 }
 

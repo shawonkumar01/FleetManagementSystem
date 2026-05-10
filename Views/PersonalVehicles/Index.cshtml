@@ -1,6 +1,7 @@
 @model IEnumerable<PersonalVehicle>
 @{
     ViewData["Title"] = "My Vehicles";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="panel">

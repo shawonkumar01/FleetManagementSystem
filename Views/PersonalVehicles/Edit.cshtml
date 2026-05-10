@@ -1,6 +1,7 @@
 @model PersonalVehicle
 @{
     ViewData["Title"] = "Edit Vehicle";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="panel" style="max-width:600px;">

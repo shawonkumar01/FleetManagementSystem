@@ -29,11 +29,13 @@ namespace FleetManagementSystem.Controllers
                 .OrderByDescending(pv => pv.CreatedAt)
                 .ToListAsync();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(vehicles);
         }
 
         public IActionResult Create()
         {
+            ViewData["Layout"] = "_UserLayout";
             return View();
         }
 
@@ -46,11 +48,13 @@ namespace FleetManagementSystem.Controllers
 
             if (ModelState.IsValid)
             {
+                vehicle.CreatedAt = DateTime.UtcNow;
                 _context.Add(vehicle);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Vehicle added successfully!";
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["Layout"] = "_UserLayout";
             return View(vehicle);
         }
 
@@ -83,6 +87,7 @@ namespace FleetManagementSystem.Controllers
                 .Where(e => e.ExpenseType == "Fuel")
                 .Sum(e => e.Liters ?? 0);
 
+            ViewData["Layout"] = "_UserLayout";
             return View(vehicle);
         }
 
@@ -96,6 +101,7 @@ namespace FleetManagementSystem.Controllers
 
             if (vehicle == null) return NotFound();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(vehicle);
         }
 
@@ -141,6 +147,7 @@ namespace FleetManagementSystem.Controllers
 
             if (vehicle == null) return NotFound();
 
+            ViewData["Layout"] = "_UserLayout";
             return View(vehicle);
         }
 
