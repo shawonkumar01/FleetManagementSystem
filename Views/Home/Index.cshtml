@@ -75,6 +75,36 @@
 </div>
 
 
+<!-- Charts Row -->
+<div class="grid-2" style="margin-bottom:24px;">
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-chart-line"></i> Fuel Consumption Trend</h5>
+        </div>
+        <div class="panel-body">
+            <canvas id="fuelChart" height="200"></canvas>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-header">
+            <h5><i class="fas fa-chart-pie"></i> Trip Status Distribution</h5>
+        </div>
+        <div class="panel-body">
+            <canvas id="tripChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Cost Analysis Chart -->
+<div class="panel" style="margin-bottom:24px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-chart-bar"></i> Monthly Cost Analysis (Fuel vs Maintenance)</h5>
+    </div>
+    <div class="panel-body">
+        <canvas id="costChart" height="100"></canvas>
+    </div>
+</div>
+
 <!-- Recent Trips + Maintenance -->
 <div class="grid-2">
 
@@ -155,3 +185,84 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fuel Consumption Chart
+        const fuelCtx = document.getElementById('fuelChart').getContext('2d');
+        new Chart(fuelCtx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.FuelChartLabels)),
+                datasets: [{
+                    label: 'Fuel (Liters)',
+                    data: @Html.Raw(Json.Serialize(ViewBag.FuelChartData)),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Trip Status Chart
+        const tripCtx = document.getElementById('tripChart').getContext('2d');
+        new Chart(tripCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Planned', 'Cancelled'],
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(ViewBag.TripStatusData)),
+                    backgroundColor: ['#22c55e', '#3b82f6', '#fbbf24', '#ef4444']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15 } }
+                }
+            }
+        });
+
+        // Cost Analysis Chart
+        const costCtx = document.getElementById('costChart').getContext('2d');
+        new Chart(costCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.CostChartLabels)),
+                datasets: [
+                    {
+                        label: 'Fuel Cost',
+                        data: @Html.Raw(Json.Serialize(ViewBag.FuelCostData)),
+                        backgroundColor: '#667eea'
+                    },
+                    {
+                        label: 'Maintenance Cost',
+                        data: @Html.Raw(Json.Serialize(ViewBag.MaintenanceCostData)),
+                        backgroundColor: '#f87171'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+}
