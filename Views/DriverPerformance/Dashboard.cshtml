@@ -1,0 +1,368 @@
+@{
+    ViewData["Title"] = "Driver Performance Dashboard";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-chart-bar"></i> Driver Performance Dashboard</h5>
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-list"></i> All Evaluations
+            </a>
+            <a asp-action="IncidentList" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-exclamation-circle"></i> Incidents
+            </a>
+            <a asp-action="Evaluate" class="btn-indigo">
+                <i class="fas fa-plus"></i> New Evaluation
+            </a>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; padding:24px; background:#1a1d35;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TotalEvaluations</h4>
+                <p>Total Evaluations</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.AverageFleetScore.ToString("F1")</h4>
+                <p>Avg Fleet Score</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TopPerformersCount</h4>
+                <p>Top Performers</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-user-times"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.NeedsImprovementCount</h4>
+                <p>Needs Improvement</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:24px;">
+            <!-- Category Averages -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-chart-pie"></i> Category Averages</h6>
+                </div>
+                <div class="panel-body">
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-shield-alt text-success"></i> Safety</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="progress-bar" style="width:120px; height:8px; background:#1e2235;">
+                                    <div style="width:@(ViewBag.SafetyAverage * 10)%; height:100%; background:linear-gradient(90deg, #22c55e, #16a34a); border-radius:4px;"></div>
+                                </div>
+                                <span>@ViewBag.SafetyAverage.ToString("F1")</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-clock text-info"></i> Punctuality</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="progress-bar" style="width:120px; height:8px; background:#1e2235;">
+                                    <div style="width:@(ViewBag.PunctualityAverage * 10)%; height:100%; background:linear-gradient(90deg, #60a5fa, #3b82f6); border-radius:4px;"></div>
+                                </div>
+                                <span>@ViewBag.PunctualityAverage.ToString("F1")</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-gas-pump text-warning"></i> Fuel Efficiency</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="progress-bar" style="width:120px; height:8px; background:#1e2235;">
+                                    <div style="width:@(ViewBag.FuelAverage * 10)%; height:100%; background:linear-gradient(90deg, #fbbf24, #f59e0b); border-radius:4px;"></div>
+                                </div>
+                                <span>@ViewBag.FuelAverage.ToString("F1")</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-car text-primary"></i> Vehicle Condition</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="progress-bar" style="width:120px; height:8px; background:#1e2235;">
+                                    <div style="width:@(ViewBag.VehicleAverage * 10)%; height:100%; background:linear-gradient(90deg, #818cf8, #6366f1); border-radius:4px;"></div>
+                                </div>
+                                <span>@ViewBag.VehicleAverage.ToString("F1")</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fas fa-smile text-success"></i> Customer Service</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="progress-bar" style="width:120px; height:8px; background:#1e2235;">
+                                    <div style="width:@(ViewBag.ServiceAverage * 10)%; height:100%; background:linear-gradient(90deg, #34d399, #10b981); border-radius:4px;"></div>
+                                </div>
+                                <span>@ViewBag.ServiceAverage.ToString("F1")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grade Distribution -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-graduation-cap"></i> Grade Distribution</h6>
+                </div>
+                <div class="panel-body">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        @foreach (var grade in ViewBag.GradeDistribution)
+                        {
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="min-width:40px; font-weight:600;">@grade.Grade</span>
+                                <div class="progress-bar" style="flex:1; height:20px; background:#1e2235; border-radius:10px;">
+                                    <div style="width:@(Math.Min(grade.Count * 10, 100))%; height:100%; background:@GetGradeColor(grade.Grade); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                        <span style="font-size:0.75rem; color:white; font-weight:500;">@grade.Count</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaderboard -->
+<div class="panel" style="margin-top:24px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-trophy"></i> Driver Leaderboard</h5>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Driver</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rank = 1; }
+                @foreach (var item in ViewBag.Leaderboard)
+                {
+                    <tr>
+                        <td>
+                            @if (rank <= 3)
+                            {
+                                <i class="fas fa-medal" style="color:@GetRankColor(rank); font-size:1.2rem;"></i>
+                            }
+                            else
+                            {
+                                <span style="font-weight:600; color:#94a3b8;">#@rank</span>
+                            }
+                        </td>
+                        <td>
+                            <strong>@item.Driver.FirstName @item.Driver.LastName</strong>
+                            <br />
+                            <small style="color:#94a3b8;">@item.Driver.LicenseNumber</small>
+                        </td>
+                        <td>
+                            @if (item.LatestPerformance != null)
+                            {
+                                <span style="font-size:1.25rem; font-weight:600; color:@GetScoreColor(item.LatestPerformance.OverallScore);">
+                                    @item.LatestPerformance.OverallScore.ToString("F1")
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:#64748b;">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.LatestPerformance != null)
+                            {
+                                <span class="badge badge-planned" style="background:@GetGradeBgColor(item.LatestPerformance.Grade);">
+                                    @item.LatestPerformance.Grade
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:#64748b;">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.LatestPerformance?.IsTopPerformer == true)
+                            {
+                                <span class="badge badge-completed"><i class="fas fa-star"></i> Top Performer</span>
+                            }
+                            else if (item.LatestPerformance?.NeedsImprovement == true)
+                            {
+                                <span class="badge badge-completed" style="background:#ef4444;"><i class="fas fa-exclamation-triangle"></i> Needs Improvement</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-planned">Normal</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="DriverReport" asp-route-driverId="@item.Driver.Id" class="btn-ghost" style="font-size:0.75rem;">
+                                <i class="fas fa-chart-line"></i> Report
+                            </a>
+                        </td>
+                    </tr>
+                    rank++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Recent Incidents -->
+<div class="panel" style="margin-top:24px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-exclamation-circle"></i> Recent Incidents</h5>
+        <a asp-action="RecordIncident" class="btn-ghost" style="font-size:0.8rem;">
+            <i class="fas fa-plus"></i> Record Incident
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Driver</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var incident in ViewBag.RecentIncidents)
+                {
+                    <tr>
+                        <td>@incident.IncidentDate.ToString("MMM dd, yyyy")</td>
+                        <td>@incident.Driver?.FirstName @incident.Driver?.LastName</td>
+                        <td>
+                            <span class="badge badge-planned" style="background:@GetIncidentTypeColor(incident.IncidentType);">
+                                <i class="@GetIncidentTypeIcon(incident.IncidentType)"></i> @incident.IncidentType
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color:@GetSeverityColor(incident.Severity); font-weight:500;">
+                                @incident.Severity
+                            </span>
+                        </td>
+                        <td>@(incident.Description?.Length > 50 ? incident.Description.Substring(0, 50) + "..." : incident.Description)</td>
+                        <td>
+                            <span class="badge badge-planned">@incident.Status</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .progress-bar {
+        background: #1e2235;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+</style>
+
+@functions {
+    string GetGradeColor(string grade)
+    {
+        return grade switch
+        {
+            "A+" => "linear-gradient(90deg, #22c55e, #16a34a)",
+            "A" => "linear-gradient(90deg, #34d399, #22c55e)",
+            "B+" => "linear-gradient(90deg, #60a5fa, #3b82f6)",
+            "B" => "linear-gradient(90deg, #818cf8, #6366f1)",
+            "C" => "linear-gradient(90deg, #fbbf24, #f59e0b)",
+            _ => "linear-gradient(90deg, #f87171, #ef4444)"
+        };
+    }
+
+    string GetGradeBgColor(string? grade)
+    {
+        return grade switch
+        {
+            "A+" or "A" => "#22c55e",
+            "B+" or "B" => "#3b82f6",
+            "C" => "#f59e0b",
+            _ => "#ef4444"
+        };
+    }
+
+    string GetRankColor(int rank)
+    {
+        return rank switch
+        {
+            1 => "#FFD700", // Gold
+            2 => "#C0C0C0", // Silver
+            3 => "#CD7F32", // Bronze
+            _ => "#94a3b8"
+        };
+    }
+
+    string GetScoreColor(decimal score)
+    {
+        return score switch
+        {
+            >= 9.0m => "#22c55e",
+            >= 7.0m => "#3b82f6",
+            >= 5.0m => "#f59e0b",
+            _ => "#ef4444"
+        };
+    }
+
+    string GetIncidentTypeColor(string type)
+    {
+        return type switch
+        {
+            "Accident" => "#ef4444",
+            "Violation" => "#f59e0b",
+            "Complaint" => "#f97316",
+            "Compliment" => "#22c55e",
+            _ => "#64748b"
+        };
+    }
+
+    string GetIncidentTypeIcon(string type)
+    {
+        return type switch
+        {
+            "Accident" => "fas fa-car-crash",
+            "Violation" => "fas fa-exclamation-triangle",
+            "Complaint" => "fas fa-thumbs-down",
+            "Compliment" => "fas fa-thumbs-up",
+            _ => "fas fa-circle"
+        };
+    }
+
+    string GetSeverityColor(string severity)
+    {
+        return severity switch
+        {
+            "Critical" => "#ef4444",
+            "High" => "#f97316",
+            "Medium" => "#fbbf24",
+            _ => "#22c55e"
+        };
+    }
+}

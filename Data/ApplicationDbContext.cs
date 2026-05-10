@@ -28,6 +28,9 @@ namespace FleetManagementSystem.Data
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentCategory> DocumentCategories { get; set; }
         public DbSet<DocumentAccessLog> DocumentAccessLogs { get; set; }
+        public DbSet<DriverPerformance> DriverPerformances { get; set; }
+        public DbSet<DriverIncident> DriverIncidents { get; set; }
+        public DbSet<PerformanceThreshold> PerformanceThresholds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -196,6 +199,19 @@ namespace FleetManagementSystem.Data
                 .HasOne(l => l.Document)
                 .WithMany()
                 .HasForeignKey(l => l.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Driver Performance relationships
+            modelBuilder.Entity<DriverPerformance>()
+                .HasOne(p => p.Driver)
+                .WithMany()
+                .HasForeignKey(p => p.DriverId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DriverIncident>()
+                .HasOne(i => i.Driver)
+                .WithMany()
+                .HasForeignKey(i => i.DriverId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // ── Seed Data ──────────────────────────────────────────

@@ -97,6 +97,12 @@
                         <i class="fas fa-file-alt"></i> Documents
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="DriverPerformance" asp-action="Dashboard"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DriverPerformance" ? "active" : "")">
+                        <i class="fas fa-chart-bar"></i> Driver Scoring
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">
