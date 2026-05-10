@@ -79,6 +79,18 @@
                         <i class="fas fa-draw-polygon"></i> Geofences
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="Expenses" asp-action="Dashboard"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Expenses" ? "active" : "")">
+                        <i class="fas fa-money-bill-wave"></i> Expenses
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Budgets" asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Budgets" ? "active" : "")">
+                        <i class="fas fa-piggy-bank"></i> Budgets
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">

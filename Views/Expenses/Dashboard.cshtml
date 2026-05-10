@@ -1,0 +1,231 @@
+@{
+    ViewData["Title"] = "Expense Dashboard";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-chart-line"></i> Expense Dashboard</h5>
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-list"></i> All Expenses
+            </a>
+            <a asp-action="Create" class="btn-indigo">
+                <i class="fas fa-plus"></i> Add Expense
+            </a>
+        </div>
+    </div>
+    
+    <!-- Key Metrics -->
+    <div class="grid-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; padding:24px; background:#1a1d35;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TotalExpenses.ToString("C")</h4>
+                <p>Total Expenses</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon indigo">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.CurrentMonthExpenses.ToString("C")</h4>
+                <p>This Month</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.PendingApprovals</h4>
+                <p>Pending Approvals</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.OverBudgetCount</h4>
+                <p>Over Budget</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+            <!-- Top Categories -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h6><i class="fas fa-chart-pie"></i> Top Spending Categories</h6>
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.TopCategories != null && ViewBag.TopCategories.Count > 0)
+                    {
+                        <table class="fleet-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th style="text-align:right;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in ViewBag.TopCategories)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge badge-planned">@category.Category</span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <strong style="color:#22c55e;">@category.Amount.ToString("C")</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div style="text-align:center; padding:20px; color:#94a3b8;">
+                            <p>No expense data available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Expenses -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h6><i class="fas fa-list"></i> Recent Expenses</h6>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    @if (ViewBag.RecentExpenses != null && ViewBag.RecentExpenses.Count > 0)
+                    {
+                        <table class="fleet-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th style="text-align:right;">Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var expense in ViewBag.RecentExpenses)
+                                {
+                                    <tr>
+                                        <td>@expense.ExpenseDate.ToString("MMM dd")</td>
+                                        <td>
+                                            <span class="badge badge-planned" style="font-size:0.7rem;">@expense.Category</span>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <strong>@expense.Amount.ToString("C")</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(expense.Status)" style="font-size:0.7rem;">
+                                                @expense.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div style="text-align:center; padding:20px; color:#94a3b8;">
+                            <p>No recent expenses</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Status -->
+        <div class="panel" style="margin-top:24px;">
+            <div class="panel-header">
+                <h6><i class="fas fa-piggy-bank"></i> Budget Status</h6>
+                <a asp-controller="Budgets" asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                    <i class="fas fa-external-link-alt"></i> Manage Budgets
+                </a>
+            </div>
+            <div class="panel-body">
+                @if (ViewBag.Budgets != null && ViewBag.Budgets.Count > 0)
+                {
+                    <div class="grid-2" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                        @foreach (var budget in ViewBag.Budgets)
+                        {
+                            var percentage = budget.TotalAmount > 0 ? (budget.SpentAmount / budget.TotalAmount) * 100 : 0;
+                            var progressColor = percentage > 90 ? "#f87171" : percentage > 70 ? "#fbbf24" : "#22c55e";
+                            var isOverBudget = budget.SpentAmount > budget.TotalAmount;
+                            
+                            <div class="panel" style="background:#252842;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                    <h6 style="margin:0;">@budget.Name</h6>
+                                    <span class="badge @(isOverBudget ? "badge-completed" : "badge-active")" style="font-size:0.7rem;">
+                                        @(isOverBudget ? "Over Budget" : "Active")
+                                    </span>
+                                </div>
+                                <div style="margin-bottom:8px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#94a3b8; margin-bottom:4px;">
+                                        <span>@budget.Category</span>
+                                        <span>@budget.StartDate.ToString("MMM yyyy") - @budget.EndDate.ToString("MMM yyyy")</span>
+                                    </div>
+                                    <div style="background:#1a1d35; border-radius:4px; height:8px; overflow:hidden;">
+                                        <div style="background:@progressColor; height:100%; width:@Math.Min(percentage, 100)%; transition:width 0.3s;"></div>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:0.85rem;">
+                                        <span style="color:@progressColor;"><strong>@percentage.ToString("F1")%</strong> used</span>
+                                        <span style="color:#94a3b8;">@budget.SpentAmount.ToString("C") / @budget.TotalAmount.ToString("C")</span>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:16px; font-size:0.8rem;">
+                                    <div>
+                                        <span style="color:#94a3b8;">Remaining:</span>
+                                        <strong style="color:@(budget.RemainingAmount < 0 ? "#f87171" : "#22c55e");">@budget.RemainingAmount.ToString("C")</strong>
+                                    </div>
+                                    <div>
+                                        <span style="color:#94a3b8;">Department:</span>
+                                        <strong>@budget.Department</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align:center; padding:40px; color:#94a3b8;">
+                        <i class="fas fa-piggy-bank" style="font-size:3rem; margin-bottom:16px;"></i>
+                        <p>No active budgets found</p>
+                        <a asp-controller="Budgets" asp-action="Create" class="btn-indigo">
+                            <i class="fas fa-plus"></i> Create Budget
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+</style>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "badge-planned",
+            "Approved" => "badge-active",
+            "Rejected" => "badge-completed",
+            "Reimbursed" => "badge-green",
+            _ => "badge-planned"
+        };
+    }
+}

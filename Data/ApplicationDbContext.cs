@@ -22,6 +22,9 @@ namespace FleetManagementSystem.Data
         public DbSet<GPSTracking> GPSTracking { get; set; }
         public DbSet<Geofence> Geofences { get; set; }
         public DbSet<GeofenceAlert> GeofenceAlerts { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
+        public DbSet<ExpenseApproval> ExpenseApprovals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -135,6 +138,37 @@ namespace FleetManagementSystem.Data
             modelBuilder.Entity<Geofence>()
                 .Property(g => g.Radius)
                 .HasPrecision(10, 2);
+
+            // Expense relationships and precision
+            modelBuilder.Entity<Expense>()
+                .HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Expense>()
+                .HasOne(e => e.Budget)
+                .WithMany(b => b.Expenses)
+                .HasForeignKey(e => e.BudgetId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Expense>()
+                .Property(e => e.Amount)
+                .HasPrecision(12, 2);
+
+            modelBuilder.Entity<Budget>()
+                .Property(b => b.TotalAmount)
+                .HasPrecision(12, 2);
+
+            modelBuilder.Entity<Budget>()
+                .Property(b => b.SpentAmount)
+                .HasPrecision(12, 2);
+
+            modelBuilder.Entity<ExpenseApproval>()
+                .HasOne(ea => ea.Expense)
+                .WithMany()
+                .HasForeignKey(ea => ea.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // ── Seed Data ──────────────────────────────────────────
 

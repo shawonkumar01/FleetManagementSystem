@@ -1,0 +1,232 @@
+@model IEnumerable<Expense>
+@{
+    ViewData["Title"] = "Expenses";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-money-bill-wave"></i> Expense Management</h5>
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Dashboard" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a asp-action="Report" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-chart-pie"></i> Reports
+            </a>
+            <a asp-action="Create" class="btn-indigo">
+                <i class="fas fa-plus"></i> Add Expense
+            </a>
+        </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="grid-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; padding:24px; background:#1a1d35;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TotalExpenses.ToString("C")</h4>
+                <p>Total Expenses</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon indigo">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.PendingAmount.ToString("C")</h4>
+                <p>Pending Approval</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.ApprovedAmount.ToString("C")</h4>
+                <p>Approved/Reimbursed</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-list-ol"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TotalCount</h4>
+                <p>Total Records</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="panel-body" style="background:#252842; margin-top:16px;">
+        <form asp-action="Index" method="get" style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-input">
+                    <option value="">All Status</option>
+                    <option value="Pending" selected="@(ViewBag.CurrentStatus == "Pending")">Pending</option>
+                    <option value="Approved" selected="@(ViewBag.CurrentStatus == "Approved")">Approved</option>
+                    <option value="Rejected" selected="@(ViewBag.CurrentStatus == "Rejected")">Rejected</option>
+                    <option value="Reimbursed" selected="@(ViewBag.CurrentStatus == "Reimbursed")">Reimbursed</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-input">
+                    <option value="">All Categories</option>
+                    @foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat" selected="@(ViewBag.CurrentCategory == cat)">@cat</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Vehicle</label>
+                <select name="vehicleId" class="form-input">
+                    <option value="">All Vehicles</option>
+                    @foreach (var vehicle in ViewBag.Vehicles)
+                    {
+                        <option value="@vehicle.Id" selected="@(ViewBag.CurrentVehicleId == vehicle.Id)">@vehicle.Make @vehicle.Model</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">From</label>
+                <input type="date" name="from" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")" class="form-input" />
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">To</label>
+                <input type="date" name="to" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")" class="form-input" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Receipt</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:40px; color:#94a3b8;">
+                            <i class="fas fa-search" style="font-size:2rem; margin-bottom:12px;"></i>
+                            <p>No expenses found matching your filters</p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var expense in Model)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (expense.Vehicle != null)
+                                {
+                                    <strong>@expense.Vehicle.Make @expense.Vehicle.Model</strong>
+                                    <br />
+                                    <small style="color:#94a3b8;">@expense.Vehicle.LicensePlate</small>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge badge-planned">@expense.Category</span>
+                            </td>
+                            <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">
+                                @expense.Description
+                            </td>
+                            <td>
+                                <strong style="color:#22c55e;">@expense.Amount.ToString("C")</strong>
+                            </td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(expense.Status)">
+                                    @expense.Status
+                                </span>
+                            </td>
+                            <td>
+                                @if (expense.HasReceipt)
+                                {
+                                    <i class="fas fa-file-invoice" style="color:#22c55e;"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-times" style="color:#64748b;"></i>
+                                }
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:4px;">
+                                    <a asp-action="Details" asp-route-id="@expense.Id" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px;">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (expense.Status == "Pending" && (User.IsInRole("Admin") || User.IsInRole("Manager")))
+                                    {
+                                        <form asp-action="Approve" asp-route-id="@expense.Id" method="post" style="display:inline;">
+                                            <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#22c55e;" onclick="return confirm('Approve this expense?')">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                        <form asp-action="Reject" asp-route-id="@expense.Id" method="post" style="display:inline;">
+                                            <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#f87171;" onclick="return confirm('Reject this expense?')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if ((expense.Status == "Approved" || expense.Status == "Rejected") && (User.IsInRole("Admin") || User.IsInRole("Manager")))
+                                    {
+                                        <form asp-action="Reimburse" asp-route-id="@expense.Id" method="post" style="display:inline;">
+                                            <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#a78bfa;" onclick="return confirm('Mark as reimbursed?')">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    <a asp-action="Edit" asp-route-id="@expense.Id" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px;">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@expense.Id" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#f87171;">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+</style>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "badge-planned",
+            "Approved" => "badge-active",
+            "Rejected" => "badge-completed",
+            "Reimbursed" => "badge-green",
+            _ => "badge-planned"
+        };
+    }
+}
