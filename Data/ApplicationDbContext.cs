@@ -19,9 +19,6 @@ namespace FleetManagementSystem.Data
         public DbSet<FuelRecord> FuelRecords { get; set; }
         public DbSet<VehicleAssignment> VehicleAssignments { get; set; }
         public DbSet<Alert> Alerts { get; set; }
-        public DbSet<PersonalVehicle> PersonalVehicles { get; set; }
-        public DbSet<PersonalVehicleDocument> PersonalVehicleDocuments { get; set; }
-        public DbSet<PersonalExpense> PersonalExpenses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -82,38 +79,7 @@ namespace FleetManagementSystem.Data
                 .Property(f => f.TotalCost)
                 .HasPrecision(10, 2);
 
-            // PersonalVehicle relationships
-            modelBuilder.Entity<PersonalVehicle>()
-                .HasOne(pv => pv.User)
-                .WithMany()
-                .HasForeignKey(pv => pv.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PersonalVehicleDocument>()
-                .HasOne(pvd => pvd.PersonalVehicle)
-                .WithMany(pv => pv.Documents)
-                .HasForeignKey(pvd => pvd.PersonalVehicleId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<PersonalExpense>()
-                .HasOne(pe => pe.PersonalVehicle)
-                .WithMany(pv => pv.Expenses)
-                .HasForeignKey(pe => pe.PersonalVehicleId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Decimal precision for PersonalExpense
-            modelBuilder.Entity<PersonalExpense>()
-                .Property(pe => pe.Amount)
-                .HasPrecision(10, 2);
-
-            modelBuilder.Entity<PersonalExpense>()
-                .Property(pe => pe.PricePerLiter)
-                .HasPrecision(10, 2);
-
-            modelBuilder.Entity<PersonalVehicle>()
-                .Property(pv => pv.PurchasePrice)
-                .HasPrecision(10, 2);
-
+            
             // ── Seed Data ──────────────────────────────────────────
 
             // Vehicles
