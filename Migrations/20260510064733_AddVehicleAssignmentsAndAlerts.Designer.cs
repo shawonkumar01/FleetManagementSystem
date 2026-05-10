@@ -4,6 +4,7 @@ using FleetManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FleetManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260510064733_AddVehicleAssignmentsAndAlerts")]
+    partial class AddVehicleAssignmentsAndAlerts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -394,168 +397,6 @@ namespace FleetManagementSystem.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalExpense", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExpenseType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<double?>("Liters")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("OdometerReading")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PersonalVehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("PricePerLiter")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("Vendor")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonalVehicleId");
-
-                    b.ToTable("PersonalExpenses");
-                });
-
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalVehicle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentOdometer")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LicensePlate")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Make")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("PurchasePrice")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VIN")
-                        .HasMaxLength(17)
-                        .HasColumnType("nvarchar(17)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PersonalVehicles");
-                });
-
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalVehicleDocument", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DocumentType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("ExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<long?>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("OriginalFileName")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("PersonalVehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("UploadDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonalVehicleId");
-
-                    b.ToTable("PersonalVehicleDocuments");
-                });
-
             modelBuilder.Entity("FleetManagementSystem.Models.Trip", b =>
                 {
                     b.Property<int>("Id")
@@ -933,39 +774,6 @@ namespace FleetManagementSystem.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalExpense", b =>
-                {
-                    b.HasOne("FleetManagementSystem.Models.PersonalVehicle", "PersonalVehicle")
-                        .WithMany("Expenses")
-                        .HasForeignKey("PersonalVehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PersonalVehicle");
-                });
-
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalVehicle", b =>
-                {
-                    b.HasOne("FleetManagementSystem.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalVehicleDocument", b =>
-                {
-                    b.HasOne("FleetManagementSystem.Models.PersonalVehicle", "PersonalVehicle")
-                        .WithMany("Documents")
-                        .HasForeignKey("PersonalVehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PersonalVehicle");
-                });
-
             modelBuilder.Entity("FleetManagementSystem.Models.Trip", b =>
                 {
                     b.HasOne("FleetManagementSystem.Models.Driver", "Driver")
@@ -1058,13 +866,6 @@ namespace FleetManagementSystem.Migrations
             modelBuilder.Entity("FleetManagementSystem.Models.Driver", b =>
                 {
                     b.Navigation("Trips");
-                });
-
-            modelBuilder.Entity("FleetManagementSystem.Models.PersonalVehicle", b =>
-                {
-                    b.Navigation("Documents");
-
-                    b.Navigation("Expenses");
                 });
 
             modelBuilder.Entity("FleetManagementSystem.Models.Vehicle", b =>

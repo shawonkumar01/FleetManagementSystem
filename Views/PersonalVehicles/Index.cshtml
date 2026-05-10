@@ -1,0 +1,82 @@
+@model IEnumerable<PersonalVehicle>
+@{
+    ViewData["Title"] = "My Vehicles";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-motorcycle"></i> My Personal Vehicles</h5>
+        <a asp-action="Create" class="btn-indigo">
+            <i class="fas fa-plus"></i> Add Vehicle
+        </a>
+    </div>
+    <div class="panel-body">
+        @if (!Model.Any())
+        {
+            <div style="text-align:center; padding:60px 20px; color:#94a3b8;">
+                <i class="fas fa-car" style="font-size:4rem; margin-bottom:20px;"></i>
+                <h3>No Vehicles Added Yet</h3>
+                <p style="margin-top:10px;">Add your bike, car, or any vehicle to track expenses, documents, and maintenance.</p>
+                <a asp-action="Create" class="btn-indigo" style="margin-top:20px;">
+                    <i class="fas fa-plus"></i> Add Your First Vehicle
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="grid-3" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+                @foreach (var vehicle in Model)
+                {
+                    var totalExpenses = vehicle.Expenses?.Sum(e => e.Amount) ?? 0;
+                    var fuelExpenses = vehicle.Expenses?.Where(e => e.ExpenseType == "Fuel").Sum(e => e.Amount) ?? 0;
+                    var maintenanceExpenses = vehicle.Expenses?.Where(e => e.ExpenseType == "Maintenance" || e.ExpenseType == "Service").Sum(e => e.Amount) ?? 0;
+                    
+                    <div style="background:#252842; border:1px solid #2d3150; border-radius:12px; padding:20px; position:relative;">
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px;">
+                            <div>
+                                <h4 style="margin:0; color:#e2e8f0;">@vehicle.Name</h4>
+                                <p style="margin:5px 0 0 0; color:#94a3b8; font-size:0.9rem;">
+                                    @vehicle.Make @vehicle.Model @vehicle.Year
+                                </p>
+                            </div>
+                            <span class="badge badge-completed">
+                                @(vehicle.LicensePlate ?? "No Plate")
+                            </span>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin:15px 0;">
+                            <div style="background:#1a1d2e; padding:10px; border-radius:8px; text-align:center;">
+                                <small style="color:#64748b; display:block;">Total Spent</small>
+                                <strong style="color:#22c55e;">@totalExpenses.ToString("C0")</strong>
+                            </div>
+                            <div style="background:#1a1d2e; padding:10px; border-radius:8px; text-align:center;">
+                                <small style="color:#64748b; display:block;">Fuel Cost</small>
+                                <strong style="color:#818cf8;">@fuelExpenses.ToString("C0")</strong>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:8px; margin-top:15px;">
+                            <a asp-action="Details" asp-route-id="@vehicle.Id" class="btn-ghost" style="flex:1; justify-content:center;">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@vehicle.Id" class="btn-ghost" style="padding:8px 12px;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@vehicle.Id" class="btn-ghost" style="padding:8px 12px; color:#f87171;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+</style>

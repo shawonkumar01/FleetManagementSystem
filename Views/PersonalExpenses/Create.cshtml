@@ -1,0 +1,117 @@
+@model PersonalExpense
+@{
+    ViewData["Title"] = "Add Expense";
+    var vehicles = ViewBag.Vehicles as List<PersonalVehicle>;
+    var preselectedType = ViewBag.PreselectedType as string;
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-plus-circle"></i> Add Expense</h5>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:16px;"></div>
+
+            <div class="form-group">
+                <label class="form-label">Vehicle</label>
+                <select asp-for="PersonalVehicleId" class="form-input" required>
+                    <option value="">Select Vehicle</option>
+                    @foreach (var v in vehicles)
+                    {
+                        <option value="@v.Id" selected="@(ViewBag.PreselectedVehicleId?.ToString() == v.Id.ToString())">@v.Name (@v.Make @v.Model)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Expense Type</label>
+                    <select asp-for="ExpenseType" class="form-input" required>
+                        <option value="">Select Type</option>
+                        <option value="Fuel" selected="@(preselectedType == "Fuel")">Fuel</option>
+                        <option value="Maintenance" selected="@(preselectedType == "Maintenance")">Maintenance</option>
+                        <option value="Service">Service</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Tax">Tax</option>
+                        <option value="Parking">Parking</option>
+                        <option value="Toll">Toll</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expense Date</label>
+                    <input asp-for="ExpenseDate" class="form-input" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                </div>
+            </div>
+
+            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input asp-for="Amount" class="form-input" type="number" step="0.01" min="0" placeholder="0.00" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vendor/Location</label>
+                    <input asp-for="Vendor" class="form-input" placeholder="e.g., Padma Filling Station" />
+                </div>
+            </div>
+
+            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                    <label class="form-label">Odometer Reading</label>
+                    <input asp-for="OdometerReading" class="form-input" type="number" min="0" placeholder="km" />
+                </div>
+            </div>
+
+            <!-- Fuel specific fields -->
+            <div id="fuel-fields" style="display:none;">
+                <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">Liters</label>
+                        <input asp-for="Liters" class="form-input" type="number" step="0.01" min="0" placeholder="0.00" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price per Liter</label>
+                        <input asp-for="PricePerLiter" class="form-input" type="number" step="0.01" min="0" placeholder="0.00" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-input" rows="3" placeholder="Any additional details..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-save"></i> Save Expense
+                </button>
+                <a asp-controller="PersonalVehicles" asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelector('[asp-for="ExpenseType"]').addEventListener('change', function() {
+        var fuelFields = document.getElementById('fuel-fields');
+        if (this.value === 'Fuel') {
+            fuelFields.style.display = 'block';
+        } else {
+            fuelFields.style.display = 'none';
+        }
+    });
+
+    // Trigger on page load
+    var expenseType = document.querySelector('[asp-for="ExpenseType"]').value;
+    if (expenseType === 'Fuel') {
+        document.getElementById('fuel-fields').style.display = 'block';
+    }
+</script>
+
+<style>
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @@media (max-width: 640px) {
+        .grid-2 { grid-template-columns: 1fr; }
+    }
+</style>

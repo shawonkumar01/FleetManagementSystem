@@ -1,0 +1,122 @@
+@model IEnumerable<PersonalExpense>
+@{
+    ViewData["Title"] = "Expense Report - " + ViewBag.Vehicle.Name;
+    var vehicle = ViewBag.Vehicle as PersonalVehicle;
+    var monthlyData = ViewBag.MonthlyData as dynamic;
+}
+
+<!-- Summary Cards -->
+<div class="grid-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
+    <div class="stat-card">
+        <div class="stat-icon indigo">
+            <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@(((decimal)ViewBag.TotalSpent).ToString("C0"))</h3>
+            <p>Total Spent</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-gas-pump"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@(((decimal)ViewBag.TotalFuel).ToString("C0"))</h3>
+            <p>Total Fuel Cost</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <i class="fas fa-wrench"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@(((decimal)ViewBag.TotalMaintenance).ToString("C0"))</h3>
+            <p>Total Maintenance</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">
+            <i class="fas fa-droplet"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@(((double)ViewBag.TotalLiters).ToString("F1")) L</h3>
+            <p>Total Fuel</p>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-calendar-alt"></i> Monthly Breakdown - @vehicle.Name</h5>
+        <a asp-action="Index" asp-route-vehicleId="@vehicle.Id" class="btn-ghost" style="font-size:0.8rem;">
+            View All Expenses
+        </a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total</th>
+                    <th>Fuel</th>
+                    <th>Maintenance</th>
+                    <th>Other</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var month in monthlyData)
+                {
+                    <tr>
+                        <td><strong>@month.MonthName</strong></td>
+                        <td style="color:#e2e8f0; font-weight:600;">@month.Total.ToString("C0")</td>
+                        <td style="color:#22c55e;">@month.Fuel.ToString("C0")</td>
+                        <td style="color:#fbbf24;">@month.Maintenance.ToString("C0")</td>
+                        <td style="color:#818cf8;">@month.Other.ToString("C0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- All Expenses -->
+<div class="panel" style="margin-top:24px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-list"></i> All Expenses</h5>
+    </div>
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Vendor</th>
+                    <th>Odometer</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var expense in Model)
+                {
+                    <tr>
+                        <td>@expense.ExpenseDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <span class="badge @(expense.ExpenseType == "Fuel" ? "badge-active" : expense.ExpenseType == "Maintenance" ? "badge-planned" : "badge-completed")">
+                                @expense.ExpenseType
+                            </span>
+                        </td>
+                        <td style="color:#22c55e; font-weight:600;">@expense.Amount.ToString("C")</td>
+                        <td>@(expense.Vendor ?? "-")</td>
+                        <td>@(expense.OdometerReading?.ToString("N0") ?? "-")</td>
+                        <td style="font-size:0.85rem;">@(expense.Notes ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+</style>

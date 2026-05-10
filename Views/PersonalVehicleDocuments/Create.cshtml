@@ -1,0 +1,67 @@
+@model PersonalVehicleDocument
+@{
+    ViewData["Title"] = "Upload Document";
+    var vehicles = ViewBag.Vehicles as List<PersonalVehicle>;
+}
+
+<div class="panel" style="max-width:600px;">
+    <div class="panel-header">
+        <h5><i class="fas fa-file-upload"></i> Upload Document</h5>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:16px;"></div>
+
+            <div class="form-group">
+                <label class="form-label">Vehicle</label>
+                <select asp-for="PersonalVehicleId" class="form-input" required>
+                    <option value="">Select Vehicle</option>
+                    @foreach (var v in vehicles)
+                    {
+                        <option value="@v.Id" selected="@(ViewBag.PreselectedVehicleId?.ToString() == v.Id.ToString())">@v.Name (@v.Make @v.Model)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Document Title</label>
+                <input asp-for="Title" class="form-input" placeholder="e.g., Insurance Policy 2024" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Document Type</label>
+                <select asp-for="DocumentType" class="form-input" required>
+                    <option value="Insurance">Insurance</option>
+                    <option value="Registration">Registration</option>
+                    <option value="Service">Service Record</option>
+                    <option value="Receipt">Receipt</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Expiry Date (if applicable)</label>
+                <input asp-for="ExpiryDate" class="form-input" type="date" />
+                <small style="color:#64748b;">Leave empty if no expiry date</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Upload File</label>
+                <input type="file" name="file" class="form-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
+                <small style="color:#64748b;">Max file size: 10MB. Allowed: PDF, Images, Word docs</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-input" rows="3" placeholder="Any additional information..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:24px;">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-upload"></i> Upload Document
+                </button>
+                <a asp-controller="PersonalVehicles" asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
