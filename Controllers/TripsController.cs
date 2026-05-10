@@ -1,8 +1,10 @@
 ﻿using FleetManagementSystem.Data;
+using FleetManagementSystem.Hubs;
 using FleetManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Controllers
@@ -11,10 +13,12 @@ namespace FleetManagementSystem.Controllers
     public class TripsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHubContext<DashboardHub> _hubContext;
 
-        public TripsController(ApplicationDbContext context)
+        public TripsController(ApplicationDbContext context, IHubContext<DashboardHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         // GET: Trips
@@ -60,6 +64,16 @@ namespace FleetManagementSystem.Controllers
             {
                 _context.Add(trip);
                 await _context.SaveChangesAsync();
+
+                // Broadcast real-time notification
+                var vehicle = await _context.Vehicles.FindAsync(trip.VehicleId);
+                var driver = await _context.Drivers.FindAsync(trip.DriverId);
+                await DashboardHub.BroadcastNewTrip(_hubContext, 
+                    $"{vehicle?.Make} {vehicle?.Model}", 
+                    $"{driver?.FirstName} {driver?.LastName}",
+                    trip.Origin, 
+                    trip.Destination);
+
                 TempData["Success"] = "Trip created successfully!";
                 return RedirectToAction(nameof(Index));
             }

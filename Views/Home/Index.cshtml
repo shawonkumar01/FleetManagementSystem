@@ -188,7 +188,97 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
+        // SignalR Connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/dashboardHub")
+            .withAutomaticReconnect()
+            .build();
+
+        // Connection status indicator
+        function updateConnectionStatus(status) {
+            const indicator = document.getElementById('signalr-status');
+            if (indicator) {
+                indicator.innerHTML = status === 'connected' 
+                    ? '<i class="fas fa-circle text-success"></i> Live' 
+                    : '<i class="fas fa-circle text-warning"></i> Offline';
+            }
+        }
+
+        // Start connection
+        connection.start()
+            .then(() => {
+                console.log("SignalR Connected");
+                updateConnectionStatus('connected');
+                connection.invoke("JoinDashboard");
+            })
+            .catch(err => {
+                console.error("SignalR Error:", err);
+                updateConnectionStatus('disconnected');
+            });
+
+        // Handle reconnection
+        connection.onreconnecting(() => {
+            console.log("SignalR Reconnecting...");
+            updateConnectionStatus('reconnecting');
+        });
+
+        connection.onreconnected(() => {
+            console.log("SignalR Reconnected");
+            updateConnectionStatus('connected');
+        });
+
+        // Real-time Stats Update
+        connection.on("StatsUpdate", (data) => {
+            console.log("Stats Update Received:", data);
+            // Show toast notification
+            showToast(`Stats Updated - Vehicles: ${data.TotalVehicles}, Drivers: ${data.TotalDrivers}`);
+        });
+
+        // New Trip Notification
+        connection.on("NewTrip", (data) => {
+            showToast(`New Trip Started: ${data.VehicleName} by ${data.DriverName} (${data.Origin} → ${data.Destination})`, 'info');
+            // Refresh recent trips table (in production, you'd dynamically add the row)
+            setTimeout(() => location.reload(), 3000);
+        });
+
+        // Maintenance Alert
+        connection.on("MaintenanceAlert", (data) => {
+            showToast(`Maintenance Due: ${data.VehicleName} - ${data.ServiceType}`, 'warning');
+        });
+
+        // Fuel Update
+        connection.on("FuelUpdate", (data) => {
+            showToast(`Fuel Added: ${data.VehicleName} - ${data.Liters}L (৳${data.Cost})`, 'success');
+        });
+
+        // Toast notification helper
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.style.cssText = `
+                position: fixed; top: 80px; right: 20px; 
+                background: ${type === 'success' ? '#22c55e' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+                color: white; padding: 15px 20px; border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;
+                max-width: 300px; font-size: 14px;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @@keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
         // Fuel Consumption Chart
         const fuelCtx = document.getElementById('fuelChart').getContext('2d');
         new Chart(fuelCtx, {
