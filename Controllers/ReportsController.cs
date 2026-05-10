@@ -1,9 +1,11 @@
 ﻿using FleetManagementSystem.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Controllers
 {
+    [Authorize]
     public class ReportsController : Controller
     {
         private readonly ApplicationDbContext _context;

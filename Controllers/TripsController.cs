@@ -1,11 +1,13 @@
 ﻿using FleetManagementSystem.Data;
 using FleetManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Controllers
 {
+    [Authorize]
     public class TripsController : Controller
     {
         private readonly ApplicationDbContext _context;

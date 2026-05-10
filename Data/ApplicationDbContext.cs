@@ -1,9 +1,11 @@
 ﻿using FleetManagementSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -99,6 +101,17 @@ namespace FleetManagementSystem.Data
                 new FuelRecord { Id = 1, VehicleId = 1, FuelDate = new DateTime(2024, 1, 10), LitersFilled = 45.5, PricePerLiter = 107, TotalCost = 4868.50m, OdometerReading = 32000, FilledBy = "Rahim Uddin", StationName = "Padma Filling Station", Notes = "Full tank" },
                 new FuelRecord { Id = 2, VehicleId = 2, FuelDate = new DateTime(2024, 1, 15), LitersFilled = 60.0, PricePerLiter = 107, TotalCost = 6420.00m, OdometerReading = 54000, FilledBy = "Karim Hossain", StationName = "Meghna Filling Station", Notes = "" },
                 new FuelRecord { Id = 3, VehicleId = 1, FuelDate = new DateTime(2024, 2, 1), LitersFilled = 40.0, PricePerLiter = 109, TotalCost = 4360.00m, OdometerReading = 32264, FilledBy = "Rahim Uddin", StationName = "Jamuna Filling Station", Notes = "After Chittagong trip" }
+            );
+
+            // ── Identity Roles ─────────────────────────────────────
+            const string ADMIN_ROLE_ID = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+            const string MANAGER_ROLE_ID = "b2c3d4e5-f6a7-8901-bcde-f23456789012";
+            const string DRIVER_ROLE_ID = "c3d4e5f6-a7b8-9012-cdef-345678901234";
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = ADMIN_ROLE_ID, Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = MANAGER_ROLE_ID, Name = "Manager", NormalizedName = "MANAGER" },
+                new IdentityRole { Id = DRIVER_ROLE_ID, Name = "Driver", NormalizedName = "DRIVER" }
             );
         }
     }

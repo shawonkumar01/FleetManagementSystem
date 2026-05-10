@@ -1,10 +1,12 @@
 ﻿using FleetManagementSystem.Data;
 using FleetManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetManagementSystem.Controllers
 {
+    [Authorize]
     public class DriversController : Controller
     {
         private readonly ApplicationDbContext _context;
