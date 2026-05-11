@@ -1,0 +1,347 @@
+@{
+    ViewData["Title"] = "Data Export Suite";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-file-export"></i> Data Export Suite</h5>
+        <span class="text-muted">Export data in Excel, CSV, or JSON format</span>
+    </div>
+
+    <div class="panel-body">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
+            <!-- Vehicles Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-car"></i> Vehicles</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export all vehicle information including make, model, status, mileage, and maintenance dates.
+                    </p>
+                    <div style="display:flex; gap:8px;">
+                        <a asp-action="Vehicles" asp-route-format="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </a>
+                        <a asp-action="Vehicles" asp-route-format="csv" class="btn-ghost" style="font-size:0.8rem;">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </a>
+                        <a asp-action="Vehicles" asp-route-format="json" class="btn-ghost" style="font-size:0.8rem;">
+                            <i class="fas fa-file-code"></i> JSON
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drivers Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-users"></i> Drivers</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export driver information including names, license details, contact info, and status.
+                    </p>
+                    <div style="display:flex; gap:8px;">
+                        <a asp-action="Drivers" asp-route-format="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </a>
+                        <a asp-action="Drivers" asp-route-format="csv" class="btn-ghost" style="font-size:0.8rem;">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </a>
+                        <a asp-action="Drivers" asp-route-format="json" class="btn-ghost" style="font-size:0.8rem;">
+                            <i class="fas fa-file-code"></i> JSON
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trips Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-route"></i> Trips</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export trip data with date range filtering. Includes routes, distances, and completion status.
+                    </p>
+                    <form asp-action="Trips" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To" />
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Maintenance Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-wrench"></i> Maintenance Records</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export maintenance history with service types, costs, and scheduling details.
+                    </p>
+                    <form asp-action="Maintenance" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To" />
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Fuel Records Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-gas-pump"></i> Fuel Records</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export fuel consumption data with costs, liters, and odometer readings.
+                    </p>
+                    <form asp-action="FuelRecords" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To" />
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Expenses Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-money-bill-wave"></i> Expenses</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export expense records with categories, amounts, approval status, and payment methods.
+                    </p>
+                    <form asp-action="Expenses" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To" />
+                        </div>
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <select name="category" class="form-input" style="flex:1;">
+                                <option value="">All Categories</option>
+                                <option value="Fuel">Fuel</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Toll">Toll</option>
+                                <option value="Parking">Parking</option>
+                                <option value="Meals">Meals</option>
+                                <option value="Accommodation">Accommodation</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bookings Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-calendar-check"></i> Vehicle Bookings</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export booking records with schedules, purposes, and approval status.
+                    </p>
+                    <form asp-action="Bookings" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To" />
+                        </div>
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <select name="status" class="form-input" style="flex:1;">
+                                <option value="">All Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="InProgress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Documents Export -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-file-alt"></i> Documents</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Export document inventory with categories, upload dates, and expiry tracking.
+                    </p>
+                    <form asp-action="Documents" method="get" style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <select name="category" class="form-input" style="flex:1;">
+                                <option value="">All Categories</option>
+                                <option value="Vehicle Registration">Vehicle Registration</option>
+                                <option value="Insurance Policy">Insurance Policy</option>
+                                <option value="Driver License">Driver License</option>
+                                <option value="Maintenance Record">Maintenance Record</option>
+                                <option value="Fuel Receipt">Fuel Receipt</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" name="format" value="excel" class="btn-indigo" style="flex:1; font-size:0.8rem;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button type="submit" name="format" value="csv" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button type="submit" name="format" value="json" class="btn-ghost" style="font-size:0.8rem;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Full Report -->
+            <div class="panel" style="background:#252842; border:2px solid #6366f1;">
+                <div class="panel-header" style="border-bottom:1px solid #2d3142;">
+                    <h6><i class="fas fa-file-archive"></i> Complete System Report</h6>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted" style="font-size:0.875rem; margin-bottom:16px;">
+                        Generate a comprehensive JSON report containing all system data with summary statistics.
+                    </p>
+                    <form asp-action="FullReport" method="get">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="date" name="fromDate" class="form-input" style="flex:1;" placeholder="From Date" />
+                            <input type="date" name="toDate" class="form-input" style="flex:1;" placeholder="To Date" />
+                        </div>
+                        <button type="submit" class="btn-indigo" style="width:100%;">
+                            <i class="fas fa-download"></i> Download Full Report (JSON)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Notes -->
+        <div class="panel" style="margin-top:24px; background:#1a1d35;">
+            <div class="panel-header">
+                <h6><i class="fas fa-info-circle"></i> Export Format Information</h6>
+            </div>
+            <div class="panel-body">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px;">
+                    <div>
+                        <h6 style="color:#22c55e; margin-bottom:8px;"><i class="fas fa-file-excel"></i> Excel (.xls)</h6>
+                        <p style="font-size:0.875rem; color:#94a3b8;">Best for data analysis in Microsoft Excel or Google Sheets. Supports formulas, charts, and pivot tables.</p>
+                    </div>
+                    <div>
+                        <h6 style="color:#fbbf24; margin-bottom:8px;"><i class="fas fa-file-csv"></i> CSV</h6>
+                        <p style="font-size:0.875rem; color:#94a3b8;">Universal format compatible with all spreadsheet applications. Lightweight and easy to import into databases.</p>
+                    </div>
+                    <div>
+                        <h6 style="color:#60a5fa; margin-bottom:8px;"><i class="fas fa-file-code"></i> JSON</h6>
+                        <p style="font-size:0.875rem; color:#94a3b8;">Structured data format ideal for developers, API integrations, and programmatic processing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-indigo {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    .btn-indigo:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    .btn-ghost {
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid #2d3142;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    .btn-ghost:hover {
+        background: #2d3142;
+        color: white;
+    }
+    .text-muted {
+        color: #94a3b8;
+    }
+</style>

@@ -103,6 +103,24 @@
                         <i class="fas fa-chart-bar"></i> Driver Scoring
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="VehicleBookings" asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "VehicleBookings" ? "active" : "")">
+                        <i class="fas fa-calendar-check"></i> Bookings
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="DataExport" asp-action="Index"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DataExport" ? "active" : "")">
+                        <i class="fas fa-file-export"></i> Data Export
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Audit" asp-action="Dashboard"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Audit" ? "active" : "")">
+                        <i class="fas fa-shield-alt"></i> Audit Trail
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">

@@ -23,6 +23,16 @@ namespace FleetManagementSystem.Models
 
         public int Mileage { get; set; }
 
+        [MaxLength(50)]
+        public string? VIN { get; set; }
+
+        [MaxLength(20)]
+        public string? FuelType { get; set; } = "Diesel";
+
+        public DateTime? PurchaseDate { get; set; }
+
+        public DateTime? LastMaintenanceDate { get; set; }
+
         // Navigation properties
         public ICollection<Trip> Trips { get; set; } = new List<Trip>();
         public ICollection<Maintenance> MaintenanceRecords { get; set; } = new List<Maintenance>();

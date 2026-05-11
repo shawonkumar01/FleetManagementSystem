@@ -44,6 +44,10 @@ builder.Services.AddSignalR();
 // Add AlertService
 builder.Services.AddScoped<AlertService>();
 
+// Add AuditService
+builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

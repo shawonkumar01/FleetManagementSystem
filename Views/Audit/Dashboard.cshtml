@@ -1,0 +1,254 @@
+@{
+    ViewData["Title"] = "Audit Dashboard";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-shield-alt"></i> Audit & Security Dashboard</h5>
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Index" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-list"></i> All Logs
+            </a>
+            <a asp-action="SecurityEvents" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-exclamation-triangle"></i> Security Events
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; padding:24px; background:#1a1d35;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.Actions24h</h4>
+                <p>Actions (24h)</p>
+                <small style="color:#64748b;">@ViewBag.Actions7d this week</small>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.Actions30d</h4>
+                <p>Actions (30 days)</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.SecurityEvents24h</h4>
+                <p>Security Events (24h)</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card">
+                <div class="stat-icon @(@ViewBag.CriticalEvents > 0 ? "red" : "green")">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>@ViewBag.CriticalEvents</h4>
+                    <p>Unresolved Critical</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:24px;">
+            <!-- Top Users -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-users"></i> Top Users by Activity (Last 7 Days)</h6>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <table class="fleet-table" style="font-size:0.875rem;">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Actions</th>
+                                <th>Activity Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in ViewBag.TopUsers)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-action="UserActivity" asp-route-userId="@user.UserId" style="color:#60a5fa;">
+                                            @user.UserName
+                                        </a>
+                                    </td>
+                                    <td>@user.ActionCount</td>
+                                    <td>
+                                        <div class="progress-bar" style="width:100px; height:6px; background:#1e2235;">
+                                            <div style="width:@(Math.Min(user.ActionCount * 2, 100))%; height:100%; background:linear-gradient(90deg, #6366f1, #8b5cf6); border-radius:3px;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Actions by Type -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-chart-pie"></i> Actions by Type (Last 7 Days)</h6>
+                </div>
+                <div class="panel-body">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        @foreach (var action in ViewBag.ActionsByType)
+                        {
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="min-width:80px; font-weight:500;">@action.Action</span>
+                                <div class="progress-bar" style="flex:1; height:20px; background:#1e2235; border-radius:10px;">
+                                    <div style="width:@(Math.Min(action.Count * 5, 100))%; height:100%; background:linear-gradient(90deg, #6366f1, #8b5cf6); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                        <span style="font-size:0.75rem; color:white; font-weight:500;">@action.Count</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Types Accessed -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-database"></i> Most Accessed Entities (Last 7 Days)</h6>
+                </div>
+                <div class="panel-body">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        @foreach (var entity in ViewBag.EntityTypesAccessed)
+                        {
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="min-width:100px; font-weight:500;">@entity.EntityType</span>
+                                <div class="progress-bar" style="flex:1; height:20px; background:#1e2235; border-radius:10px;">
+                                    <div style="width:@(Math.Min(entity.Count * 5, 100))%; height:100%; background:linear-gradient(90deg, #22c55e, #10b981); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                        <span style="font-size:0.75rem; color:white; font-weight:500;">@entity.Count</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Security Events -->
+            <div class="panel" style="background:#252842;">
+                <div class="panel-header">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Recent Security Events</h6>
+                    <a asp-action="SecurityEvents" class="btn-ghost" style="font-size:0.75rem;">View All</a>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <table class="fleet-table" style="font-size:0.875rem;">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Severity</th>
+                                <th>User</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var evt in ViewBag.RecentSecurityEvents)
+                            {
+                                <tr>
+                                    <td>@evt.Timestamp.ToString("MMM dd HH:mm")</td>
+                                    <td>@evt.EventType</td>
+                                    <td>
+                                        <span style="color:@GetSeverityColor(evt.Severity); font-weight:500;">
+                                            @evt.Severity
+                                        </span>
+                                    </td>
+                                    <td>@evt.UserName</td>
+                                    <td>
+                                        @if (evt.IsResolved)
+                                        {
+                                            <span class="badge badge-completed"><i class="fas fa-check"></i> Resolved</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-planned"><i class="fas fa-clock"></i> Open</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Suspicious Activity Alert -->
+@if (ViewBag.SuspiciousActivity != null && ViewBag.SuspiciousActivity.Count > 0)
+{
+    <div class="panel" style="margin-top:24px; border:2px solid #ef4444;">
+        <div class="panel-header" style="background:#dc2626;">
+            <h5 style="color:white;"><i class="fas fa-radiation"></i> Suspicious Activity Detected</h5>
+        </div>
+        <div class="panel-body" style="padding:0;">
+            <table class="fleet-table" style="font-size:0.875rem;">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>IP Address</th>
+                        <th>Failed Attempts</th>
+                        <th>Last Attempt</th>
+                        <th>Account Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var activity in ViewBag.SuspiciousActivity)
+                    {
+                        <tr style="background:#450a0a;">
+                            <td>@activity.UserName</td>
+                            <td>@activity.IpAddress</td>
+                            <td>@activity.FailedAttemptCount</td>
+                            <td>@activity.Timestamp.ToString("MMM dd HH:mm")</td>
+                            <td>
+                                @if (activity.IsAccountLocked)
+                                {
+                                    <span style="color:#ef4444; font-weight:600;"><i class="fas fa-lock"></i> LOCKED</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#fbbf24;"><i class="fas fa-exclamation-triangle"></i> At Risk</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<style>
+    .progress-bar {
+        background: #1e2235;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+</style>
+
+@functions {
+    string GetSeverityColor(string severity)
+    {
+        return severity switch
+        {
+            "Critical" => "#ef4444",
+            "Warning" => "#fbbf24",
+            _ => "#22c55e"
+        };
+    }
+}

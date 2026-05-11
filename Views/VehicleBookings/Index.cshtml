@@ -1,0 +1,267 @@
+@model IEnumerable<VehicleBooking>
+@{
+    ViewData["Title"] = "Vehicle Bookings";
+}
+
+<div class="panel">
+    <div class="panel-header">
+        <h5><i class="fas fa-calendar-check"></i> Vehicle Bookings</h5>
+        <div style="display:flex; gap:12px;">
+            <a asp-action="Calendar" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-calendar-alt"></i> Calendar View
+            </a>
+            <a asp-action="Availability" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-clock"></i> Availability
+            </a>
+            <a asp-action="MyBookings" class="btn-ghost" style="font-size:0.8rem;">
+                <i class="fas fa-user"></i> My Bookings
+            </a>
+            <a asp-action="Create" class="btn-indigo">
+                <i class="fas fa-plus"></i> New Booking
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:16px; padding:24px; background:#1a1d35;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TotalBookings</h4>
+                <p>Total Bookings</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.PendingBookings</h4>
+                <p>Pending</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.ConfirmedBookings</h4>
+                <p>Confirmed</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-info">
+                <h4>@ViewBag.TodayBookings</h4>
+                <p>Today</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="panel-body" style="background:#252842; margin-top:16px;">
+        <form asp-action="Index" method="get" style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-input">
+                    <option value="">All Status</option>
+                    <option value="Pending" selected="@(ViewBag.CurrentStatus == "Pending")">Pending</option>
+                    <option value="Confirmed" selected="@(ViewBag.CurrentStatus == "Confirmed")">Confirmed</option>
+                    <option value="InProgress" selected="@(ViewBag.CurrentStatus == "InProgress")">In Progress</option>
+                    <option value="Completed" selected="@(ViewBag.CurrentStatus == "Completed")">Completed</option>
+                    <option value="Cancelled" selected="@(ViewBag.CurrentStatus == "Cancelled")">Cancelled</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Vehicle</label>
+                <select name="vehicleId" class="form-input">
+                    <option value="">All Vehicles</option>
+                    @foreach (var vehicle in ViewBag.Vehicles)
+                    {
+                        <option value="@vehicle.Id" selected="@(ViewBag.CurrentVehicleId == vehicle.Id)">@vehicle.Make @vehicle.Model</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">From Date</label>
+                <input type="date" name="fromDate" value="@ViewBag.CurrentFromDate" class="form-input" />
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">To Date</label>
+                <input type="date" name="toDate" value="@ViewBag.CurrentToDate" class="form-input" />
+            </div>
+            <div class="form-group" style="flex:1; min-width:150px;">
+                <label class="form-label">Priority</label>
+                <select name="priority" class="form-input">
+                    <option value="">All</option>
+                    <option value="Urgent" selected="@(ViewBag.CurrentPriority == "Urgent")">Urgent</option>
+                    <option value="High" selected="@(ViewBag.CurrentPriority == "High")">High</option>
+                    <option value="Normal" selected="@(ViewBag.CurrentPriority == "Normal")">Normal</option>
+                    <option value="Low" selected="@(ViewBag.CurrentPriority == "Low")">Low</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn-indigo">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="panel-body" style="padding:0;">
+        <table class="fleet-table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Vehicle</th>
+                    <th>Schedule</th>
+                    <th>Purpose</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:40px; color:#94a3b8;">
+                            <i class="fas fa-calendar-times" style="font-size:3rem; margin-bottom:16px;"></i>
+                            <p>No bookings found. Create your first booking!</p>
+                            <a asp-action="Create" class="btn-indigo">
+                                <i class="fas fa-plus"></i> New Booking
+                            </a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@booking.BookingReference</strong>
+                                <br />
+                                <small style="color:#94a3b8;">by @booking.RequesterName</small>
+                            </td>
+                            <td>
+                                @if (booking.Vehicle != null)
+                                {
+                                    <div>
+                                        <i class="fas fa-car"></i> @booking.Vehicle.Make @booking.Vehicle.Model
+                                    </div>
+                                    <small style="color:#94a3b8;">@booking.Vehicle.LicensePlate</small>
+                                }
+                            </td>
+                            <td>
+                                <div><i class="fas fa-play"></i> @booking.StartTime.ToString("MMM dd, HH:mm")</div>
+                                <div><i class="fas fa-stop"></i> @booking.EndTime.ToString("MMM dd, HH:mm")</div>
+                                @if (booking.Driver != null)
+                                {
+                                    <small style="color:#94a3b8;"><i class="fas fa-user"></i> @booking.Driver.FirstName @booking.Driver.LastName</small>
+                                }
+                            </td>
+                            <td>
+                                @(booking.Purpose?.Length > 30 ? booking.Purpose.Substring(0, 30) + "..." : booking.Purpose)
+                                <br />
+                                <small style="color:#94a3b8;"><i class="fas fa-map-marker-alt"></i> @booking.PickupLocation <i class="fas fa-arrow-right"></i> @booking.Destination</small>
+                            </td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(booking.Status)">
+                                    @booking.Status
+                                </span>
+                            </td>
+                            <td>
+                                <span style="color:@GetPriorityColor(booking.Priority); font-weight:500;">
+                                    <i class="@GetPriorityIcon(booking.Priority)"></i> @booking.Priority
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:4px;">
+                                    <a asp-action="Details" asp-route-id="@booking.Id" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px;" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (booking.Status == "Pending" || booking.Status == "Confirmed")
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@booking.Id" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px;" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    }
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                    {
+                                        @if (booking.Status == "Pending")
+                                        {
+                                            <form asp-action="Approve" asp-route-id="@booking.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#22c55e;" title="Approve">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="Reject" asp-route-id="@booking.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#ef4444;" title="Reject">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    }
+                                    @if (booking.Status != "Completed" && booking.Status != "Cancelled")
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@booking.Id" method="post" style="display:inline;" onsubmit="return confirm('Cancel this booking?');">
+                                            <button type="submit" class="btn-ghost" style="font-size:0.75rem; padding:6px 10px; color:#f59e0b;" title="Cancel">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "badge-planned",
+            "Confirmed" => "badge-progress",
+            "InProgress" => "badge-progress",
+            "Completed" => "badge-completed",
+            "Cancelled" => "badge-completed",
+            "Rejected" => "badge-completed",
+            _ => "badge-planned"
+        };
+    }
+
+    string GetPriorityColor(string priority)
+    {
+        return priority switch
+        {
+            "Urgent" => "#ef4444",
+            "High" => "#f97316",
+            "Normal" => "#3b82f6",
+            "Low" => "#22c55e",
+            _ => "#64748b"
+        };
+    }
+
+    string GetPriorityIcon(string priority)
+    {
+        return priority switch
+        {
+            "Urgent" => "fas fa-exclamation-circle",
+            "High" => "fas fa-arrow-up",
+            "Normal" => "fas fa-minus",
+            "Low" => "fas fa-arrow-down",
+            _ => "fas fa-circle"
+        };
+    }
+}

@@ -31,6 +31,12 @@ namespace FleetManagementSystem.Data
         public DbSet<DriverPerformance> DriverPerformances { get; set; }
         public DbSet<DriverIncident> DriverIncidents { get; set; }
         public DbSet<PerformanceThreshold> PerformanceThresholds { get; set; }
+        public DbSet<VehicleBooking> VehicleBookings { get; set; }
+        public DbSet<BookingConflict> BookingConflicts { get; set; }
+        public DbSet<VehicleAvailability> VehicleAvailabilities { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<SecurityEvent> SecurityEvents { get; set; }
+        public DbSet<DataAccessLog> DataAccessLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -213,6 +219,33 @@ namespace FleetManagementSystem.Data
                 .WithMany()
                 .HasForeignKey(i => i.DriverId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Vehicle Booking relationships
+            modelBuilder.Entity<VehicleBooking>()
+                .HasOne(b => b.Vehicle)
+                .WithMany()
+                .HasForeignKey(b => b.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<VehicleBooking>()
+                .HasOne(b => b.Driver)
+                .WithMany()
+                .HasForeignKey(b => b.DriverId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<VehicleBooking>()
+                .HasOne(b => b.Trip)
+                .WithMany()
+                .HasForeignKey(b => b.TripId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<VehicleBooking>()
+                .Property(b => b.EstimatedCost)
+                .HasPrecision(12, 2);
+
+            modelBuilder.Entity<VehicleBooking>()
+                .Property(b => b.ActualCost)
+                .HasPrecision(12, 2);
 
             // ── Seed Data ──────────────────────────────────────────
 
